@@ -30,7 +30,7 @@ Examples:
 The following is an example of how `PuppeteerModel` can be invoked using an `impl`.
 
 ```yaml
-name: green-hosting-demo
+name: puppeteer-demo
 description: example impl invoking puppeteer model
 tags:
 initialize:

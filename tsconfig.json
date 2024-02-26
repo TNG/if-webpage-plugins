@@ -13,8 +13,7 @@
     "lib": [
       "es2020"
     ],
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "CommonJS",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,

@@ -10,7 +10,7 @@
 
 ## observations
 
-- `url`: the url of the web page that is checked for green hosting.
+- `domain`: the domain of the web page that is checked for green hosting.
 
 Valid formats must not include protocol, port, or path information.
 

@@ -25,7 +25,7 @@ export class GreenHostingModel implements ModelPluginInterface {
       inputs.map(async input => {
         const validInput = Object.assign(input, this.validateInput(input));
 
-        input['green-hosting'] = await hosting.check(validInput.url);
+        input['green-hosting'] = await hosting.check(validInput.domain);
         return input;
       })
     );
@@ -37,9 +37,9 @@ export class GreenHostingModel implements ModelPluginInterface {
   private validateInput(input: ModelParams) {
     const schema = z
       .object({
-        url: z.string(),
+        domain: z.string(),
       })
-      .refine(allDefined, {message: '`url` must be provided.'});
+      .refine(allDefined, {message: '`domain` must be provided.'});
 
     return validate<z.infer<typeof schema>>(schema, input);
   }
