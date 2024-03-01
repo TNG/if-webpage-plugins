@@ -6,19 +6,39 @@ initialize:
     - name: green-hosting
       model: GreenHostingModel
       path: '@alexzurbonsen/if-webpage-models-cjs'
+    - name: puppeteer
+      model: PuppeteerModel
+      path: '@alexzurbonsen/if-webpage-models-cjs'
     - name: rename
       model: Rename
       path: '@alexzurbonsen/if-webpage-models-cjs'
+    - name: co2js
+      model: Co2jsModel
+      path: '@grnsft/if-unofficial-models'
 graph:
   children:
     child:
       pipeline:
+        - puppeteer
         - green-hosting
         - rename
+        - co2js
       config:
+        green-hosting:
+          domain: google.com
         rename: 
           green-hosting: green-web-host
+          page-weight: bytes
+        co2js:
+          type: swd
       inputs:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
-          domain: tngtech.com
+          url: https://www.google.com/
+          options:
+            firstVisitPercentage: 0.1,
+            returnVisitPercentage: 0.9,
+            gridIntensity:
+              device: 560.98
+              dataCenter:
+                country: 'TWN'

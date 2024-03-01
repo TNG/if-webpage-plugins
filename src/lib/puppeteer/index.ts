@@ -11,6 +11,7 @@ type Resource = {
   url: string;
   size: number;
   type: ResourceType;
+  fromCache: boolean;
 };
 
 export class PuppeteerModel implements ModelPluginInterface {
@@ -30,11 +31,11 @@ export class PuppeteerModel implements ModelPluginInterface {
     return await Promise.all(
       inputs.map(async input => {
         const validInput = Object.assign(input, this.validateInput(input));
-        const {pageWeight, pageResources} = await this.measurePageSize(
-          validInput.url
-        );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {pageWeight, dataReloadRatio} = await this.measurePageSize(validInput.url);
         input['page-weight'] = pageWeight;
-        input['page-resources'] = pageResources;
+        input.options['dataReloadRatio'] = dataReloadRatio;
+        //input['page-resources'] = pageResources;
         return input;
       })
     );
@@ -56,6 +57,7 @@ export class PuppeteerModel implements ModelPluginInterface {
   private async measurePageSize(url: string) {
     try {
       const browser = await puppeteer.launch();
+
       try {
         const page = await browser.newPage();
         const pageResources: Resource[] = [];
@@ -63,6 +65,7 @@ export class PuppeteerModel implements ModelPluginInterface {
           const resource = {
             url: response.url(),
             size: (await response.buffer()).length,
+            fromCache: response.fromCache(),
             type: response.request().resourceType(),
           };
           pageResources.push(resource);
@@ -74,7 +77,15 @@ export class PuppeteerModel implements ModelPluginInterface {
           (acc, resource) => acc + resource.size,
           0
         );
-        return {pageWeight, pageResources};
+        const cacheWeight = pageResources.reduce(
+          (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
+          0
+        );
+        return {
+          pageWeight,
+          pageResources,
+          dataReloadRatio: (pageWeight - cacheWeight) / pageWeight,
+        };
       } finally {
         await browser.close();
       }
