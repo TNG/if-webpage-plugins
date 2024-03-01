@@ -1,0 +1,24 @@
+name: green-hosting-demo
+description: example impl invoking green-hosting model
+tags:
+initialize:
+  models:
+    - name: green-hosting
+      model: GreenHostingModel
+      path: '@alexzurbonsen/if-webpage-models-cjs'
+    - name: rename
+      model: Rename
+      path: '@alexzurbonsen/if-webpage-models-cjs'
+graph:
+  children:
+    child:
+      pipeline:
+        - green-hosting
+        - rename
+      config:
+        rename: 
+          green-hosting: green-web-host
+      inputs:
+        - timestamp: 2024-02-25T00:00 # time when measurement occurred
+          duration: 1
+          domain: tngtech.com
