@@ -8,12 +8,15 @@ import {ModelParams} from '../../types';
 import {buildErrorMessage} from '../../util/helpers.js';
 
 export class GreenHostingModel implements ModelPluginInterface {
+  domain: string = '';
   errorBuilder = buildErrorMessage(this.constructor.name);
 
   /**
    * Configures the green hosting model.
    */
-  public async configure(): Promise<ModelPluginInterface> {
+  public async configure(staticParams: object): Promise<ModelPluginInterface> {
+    this.setValidatedParams(staticParams);
+
     return this;
   }
 
@@ -23,18 +26,28 @@ export class GreenHostingModel implements ModelPluginInterface {
   public async execute(inputs: ModelParams[]): Promise<ModelParams[]> {
     return await Promise.all(
       inputs.map(async input => {
-        const validInput = Object.assign(input, this.validateInput(input));
-
-        input['green-hosting'] = await hosting.check(validInput.domain);
+        this.setValidatedParams(input);
+        input['green-hosting'] = await hosting.check(this.domain);
         return input;
       })
     );
   }
 
+  private setValidatedParams(params: object) {
+    if ('domain' in params) {
+      const safeStaticParams = Object.assign(
+        params,
+        this.validateInput(params)
+      );
+
+      this.domain = safeStaticParams.domain;
+    }
+  }
+
   /**
    * Validates the input parameters of the green hosting model.
    */
-  private validateInput(input: ModelParams) {
+  private validateInput(input: object) {
     const schema = z
       .object({
         domain: z.string(),
