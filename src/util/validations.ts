@@ -1,6 +1,6 @@
 import {ZodIssue, ZodIssueCode, ZodSchema} from 'zod';
 
-import {ERRORS} from './errors.js';
+import {ERRORS} from './errors';
 
 const {InputValidationError} = ERRORS;
 
@@ -24,6 +24,7 @@ const prettifyErrorMessage = (issues: string) => {
   const issuesArray = JSON.parse(issues);
 
   return issuesArray.map((issue: ZodIssue) => {
+    const code = issue.code;
     let {path, message} = issue;
 
     if (issue.code === ZodIssueCode.invalid_union) {
@@ -37,9 +38,7 @@ const prettifyErrorMessage = (issues: string) => {
       return message;
     }
 
-    return `"${fullPath}" parameter is ${message.toLowerCase()}. Error code: ${
-      issue.code
-    }.`;
+    return `"${fullPath}" parameter is ${message.toLowerCase()}. Error code: ${code}.`;
   });
 };
 

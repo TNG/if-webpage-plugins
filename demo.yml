@@ -2,33 +2,24 @@ name: green-hosting-demo
 description: example impl invoking green-hosting model
 tags:
 initialize:
-  models:
-    - name: green-hosting
-      model: GreenHostingModel
+  plugins:
+    "green-hosting":
+      method: GreenHosting
       path: '@alexzurbonsen/if-webpage-models-cjs'
-    - name: puppeteer
-      model: PuppeteerModel
+    "measure-webpage":
+      method: MeasureWebpage
       path: '@alexzurbonsen/if-webpage-models-cjs'
-    - name: rename
-      model: Rename
-      path: '@alexzurbonsen/if-webpage-models-cjs'
-    - name: co2js
-      model: Co2jsModel
-      path: '@grnsft/if-unofficial-models'
-graph:
+    "co2js":
+      method: Co2js
+      path: '@grnsft/if-unofficial-plugins'
+tree:
   children:
     child:
       pipeline:
-        - puppeteer
+        - measure-webpage
         - green-hosting
-        - rename
         - co2js
       config:
-        green-hosting:
-          domain: google.com
-        rename: 
-          green-hosting: green-web-host
-          page-weight: bytes
         co2js:
           type: swd
       inputs:

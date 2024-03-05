@@ -1,66 +1,46 @@
-import {ModelPluginInterface} from '../../interfaces/index.js';
-import {ModelParams} from '../../types/index.js';
-import {buildErrorMessage} from '../../util/helpers.js';
+import {PluginParams} from "../../types/common";
+import {PluginInterface} from "../../interfaces";
 
-export class IdentityModel implements ModelPluginInterface {
-  errorBuilder = buildErrorMessage(this.constructor.name);
-
-  /**
-   * Configures the green hosting model.
-   */
-  public async configure(): Promise<ModelPluginInterface> {
-    return this;
+export const Identity = (): PluginInterface => {
+  const metadata = {
+    kind: 'execute',
   }
 
   /**
    * Returns the inputs as outputs.
    */
-  public async execute(inputs: ModelParams[]): Promise<ModelParams[]> {
+  const execute = async (inputs: PluginParams[]): Promise<PluginParams[]> => {
     return [{foo: 'bar', domain: 'tngtech.com'} as any, ...inputs];
   }
+
+  return {
+    metadata,
+    execute,
+  };
 }
 
-export class DuplicateModel implements ModelPluginInterface {
-  errorBuilder = buildErrorMessage(this.constructor.name);
-  n!: number;
-  /**
-   * Configures the green hosting model.
-   */
-  public async configure(params: any): Promise<ModelPluginInterface> {
-    this.n = params.n;
-    return this;
+export const Rename = (): PluginInterface => {
+  const renames: Record<string, string> = {};
+  const metadata = {
+    kind: 'execute',
   }
 
   /**
    * Returns the inputs as outputs.
    */
-  public async execute(inputs: ModelParams[]): Promise<ModelParams[]> {
-    return this.n === 2 ? [...inputs, ...inputs] : inputs;
-  }
-}
-
-export class Rename implements ModelPluginInterface {
-  errorBuilder = buildErrorMessage(this.constructor.name);
-  renames!: Record<string, string>;
-  /**
-   * Configures the green hosting model.
-   */
-  public async configure(renames: any): Promise<ModelPluginInterface> {
-    this.renames = renames;
-    return this;
+  const execute = async (inputs: PluginParams[]): Promise<PluginParams[]> => {
+    return inputs.map(renameKeys);
   }
 
-  /**
-   * Returns the inputs as outputs.
-   */
-  public async execute(inputs: ModelParams[]): Promise<ModelParams[]> {
-    return inputs.map(this.renameKeys.bind(this));
-  }
-
-  private renameKeys(input: ModelParams) {
-    Object.entries(this.renames).forEach(entry => {
+  const renameKeys = (input: PluginParams) => {
+    Object.entries(renames).forEach(entry => {
       input[entry[1]] = input[entry[0]];
     });
     return input;
   }
+
+  return {
+    metadata,
+    execute,
+  };
 }

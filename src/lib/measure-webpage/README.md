@@ -15,9 +15,9 @@
 Valid formats must include protocol.
 
 Examples:
-- `climateaction.tech` Accepted
-- `https://climateaction.tech` Not Accepted
-- `climateaction.tech/events` Not Accepted
+- `climateaction.tech` Not Accepted
+- `https://climateaction.tech` Accepted
+- `climateaction.tech/events` Have to check
 
 
 ## Returns
@@ -27,18 +27,18 @@ Examples:
 
 ## IMPL
 
-The following is an example of how `PuppeteerModel` can be invoked using an `impl`.
+The following is an example of how `Puppeteer` can be invoked using a manifest.
 
 ```yaml
 name: puppeteer-demo
-description: example impl invoking puppeteer model
+description: example manifest invoking puppeteer method
 tags:
 initialize:
   models:
     - name: puppeteer
-      model: PuppeteerModel
+      method: PuppeteerModel
       path: '@alexzurbonsen/if-webpage-models-cjs'
-graph:
+tree:
   children:
     child:
       pipeline:

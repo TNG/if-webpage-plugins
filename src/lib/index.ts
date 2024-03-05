@@ -1,3 +1,2 @@
-export * from './green-hosting/index.js';
-export * from './puppeteer/index.js';
-export * from './utils/index.js';
+export {GreenHosting} from './green-hosting/index.js';
+export {MeasureWebpage} from './measure-webpage/index.js';
