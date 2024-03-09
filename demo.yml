@@ -12,6 +12,14 @@ initialize:
     "co2js":
       method: Co2js
       path: '@grnsft/if-unofficial-plugins'
+      global-config:
+        options:
+          firstVisitPercentage: 0.9
+          returnVisitPercentage: 0.1
+          gridIntensity:
+            device: 560.98
+            dataCenter:
+              country: 'TWN'
 tree:
   children:
     child:
@@ -26,10 +34,3 @@ tree:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
           url: https://www.google.com/
-          options:
-            firstVisitPercentage: 0.1,
-            returnVisitPercentage: 0.9,
-            gridIntensity:
-              device: 560.98
-              dataCenter:
-                country: 'TWN'
