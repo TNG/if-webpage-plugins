@@ -28,10 +28,16 @@ export const MeasureWebpage = (): PluginInterface => {
       inputs.map(async input => {
         const validInput = Object.assign(input, validateSingleInput(input));
         const {pageWeight, dataReloadRatio} = await measurePageSize(validInput.url);
-        input['bytes'] = pageWeight;
-        input.options['dataReloadRatio'] = dataReloadRatio;
-        //input['page-resources'] = pageResources;
-        return input;
+
+        return {
+          ...input,
+          'network/data/bytes': pageWeight,
+          options: {
+            ...input.options,
+            'dataReloadRatio': dataReloadRatio,
+          },
+        }
+        //validInput['page-resources'] = pageResources;
       })
     );
   }
@@ -66,7 +72,7 @@ export const MeasureWebpage = (): PluginInterface => {
           pageResources.push(resource);
         });
 
-        await page.goto(url);
+        await page.goto(url, {waitUntil: 'networkidle0', timeout: 0});
 
         const pageWeight = pageResources.reduce(
           (acc, resource) => acc + resource.size,
@@ -76,6 +82,9 @@ export const MeasureWebpage = (): PluginInterface => {
           (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
           0
         );
+
+        await browser.close();
+
         return {
           pageWeight,
           pageResources,
@@ -83,7 +92,6 @@ export const MeasureWebpage = (): PluginInterface => {
         };
       } finally {
         // TODO setTimeout or a better solution
-        await browser.close();
       }
     } catch (error) {
       throw new Error(

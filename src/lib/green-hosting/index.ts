@@ -20,8 +20,10 @@ export const GreenHosting = (): PluginInterface => {
       inputs.map(async input => {
         const validatedInput = validateSingleInput(input);
         const domain = getDomain(validatedInput.url);
-        input['green-web-host'] = domain ? await hosting.check(domain) : undefined;
-        return input;
+        return {
+          ...input,
+          'green-web-host': domain ? await hosting.check(domain) : undefined,
+        };
       })
     );
   }
