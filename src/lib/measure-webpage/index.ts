@@ -49,14 +49,20 @@ export const MeasureWebpage = (
     return await Promise.all(
       inputs.map(async input => {
         const validInput = Object.assign(input, validateSingleInput(input));
+        const startTimestamp = Date.now();
         const {pageWeight, resourceTypeWeights, dataReloadRatio} =
           await measurePageWithReloadRatio(
             validInput.url,
             mergedValidatedConfig
           );
+        const endTimestamp = Date.now();
+        const startTime = new Date(startTimestamp).toISOString();
+        const durationInSeconds = (endTimestamp - startTimestamp) / 1000;
 
         return {
           ...input,
+          timestamp: startTime,
+          duration: durationInSeconds,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
           options: {
