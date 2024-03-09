@@ -1,6 +1,6 @@
-# Lighthouse
+# MeasureWebpage
 
-> [!NOTE] > `Puppeteer` ([Puppeteer](https://github.com/puppeteer/puppeteer)) is a community model, not part of the IF standard library. This means the IF core team are not closely monitoring these models to keep them up to date. You should do your own research before implementing them!
+> [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
 # Parameters
 
@@ -16,15 +16,7 @@
 
 ## observations
 
-- `url`: the url of the web page for which the page weight and loaded resources are determined.
-
-Valid formats must include protocol.
-TODO: check...
-Examples:
-- `climateaction.tech` Not Accepted
-- `https://climateaction.tech` Accepted
-- `climateaction.tech/events` Have to check
-
+... tbd
 
 ## Returns
 

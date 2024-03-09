@@ -1,6 +1,6 @@
-# Lighthouse
+# Green Hosting
 
-> [!NOTE] > `Green-Hosting` ([Green Web Foundation](https://www.thegreenwebfoundation.org/tools/green-web-dataset/)) is a community model, not part of the IF standard library. This means the IF core team are not closely monitoring these models to keep them up to date. You should do your own research before implementing them!
+> [!NOTE] > `Green-Hosting` ([Green Web Foundation](https://www.thegreenwebfoundation.org/tools/green-web-dataset/)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
 # Parameters
 
