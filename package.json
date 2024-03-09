@@ -6,6 +6,9 @@
     "name": "A. zur Bonsen, TNG Technology Consulting GmbH",
     "email": "alexander.zur.bonsen@tngtech.com"
   },
+  "bugs": {
+    "url": "https://github.com/wr24-greenit/if-webpage-models-cjs/issues"
+  },
   "dependencies": {
     "@tgwf/co2": "^0.14.3",
     "puppeteer": "^22.2.0",
@@ -29,6 +32,7 @@
     "husky": "^8.0.0",
     "jest": "^29.6.1",
     "jest-mock-axios": "^4.7.2",
+    "lint-staged": "^15.2.2",
     "ts-jest": "^29.1.1",
     "zod": "^3.22.4"
   },
@@ -36,9 +40,13 @@
     "node": ">=18",
     "npm": ">=8"
   },
+  "exports": {
+    "require": "./build/index.js"
+  },
   "files": [
     "build"
   ],
+  "homepage": "https://github.com/wr24-greenit/if-webpage-models-cjs",
   "keywords": [
     "green software",
     "green software foundation",
@@ -49,9 +57,6 @@
   ],
   "license": "MIT",
   "main": "./build/index.js",
-  "exports": {
-    "require": "./build/index.js"
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -64,6 +69,7 @@
     "fix": "gts fix",
     "fix:package": "fixpack",
     "lint": "gts lint",
+    "pre-commit": "lint-staged",
     "prepare": "husky install",
     "prepublish": "npm run build",
     "test": "jest --verbose"
