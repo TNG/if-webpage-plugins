@@ -30,7 +30,12 @@ tree:
       config:
         co2js:
           type: swd
+        measure-webpage:
+          mobileDevice: 'iPhone 6'
+          scrollToBottom: true
+          headers:
+            accept-encoding: [gzip, deflate, br]
       inputs:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
-          url: https://www.google.com/
+          url: https://www.tagesschau.de/

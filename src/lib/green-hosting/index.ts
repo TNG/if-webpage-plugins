@@ -4,8 +4,8 @@ import {z} from 'zod';
 
 import {allDefined, validate} from '../../util/validations.js';
 
-import {PluginInterface} from "../../interfaces";
-import {PluginParams} from "../../types/common";
+import {PluginInterface} from '../../interfaces';
+import {PluginParams} from '../../types/common';
 
 export const GreenHosting = (): PluginInterface => {
   const metadata = {
@@ -26,7 +26,7 @@ export const GreenHosting = (): PluginInterface => {
         };
       })
     );
-  }
+  };
 
   /**
    * Validates the input parameters of the green hosting model.
@@ -39,10 +39,10 @@ export const GreenHosting = (): PluginInterface => {
       .refine(allDefined, {message: '`url` must be provided.'});
 
     return validate<z.infer<typeof schema>>(schema, input);
-  }
+  };
 
   return {
     metadata,
     execute,
   };
-}
+};
