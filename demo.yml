@@ -3,6 +3,9 @@ description: example impl invoking green-hosting model
 tags:
 initialize:
   plugins:
+    "timer":
+      method: Timer
+      path: '@alexzurbonsen/if-webpage-models-cjs'
     "green-hosting":
       method: GreenHosting
       path: '@alexzurbonsen/if-webpage-models-cjs'
@@ -24,6 +27,7 @@ tree:
   children:
     child:
       pipeline:
+        - timer
         - measure-webpage
         - green-hosting
         - co2js
@@ -38,4 +42,4 @@ tree:
       inputs:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
-          url: https://www.tagesschau.de/
+          url: https://www.tngtech.com/

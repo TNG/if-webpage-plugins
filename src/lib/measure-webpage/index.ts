@@ -56,13 +56,11 @@ export const MeasureWebpage = (
             mergedValidatedConfig
           );
         const endTimestamp = Date.now();
-        const startTime = new Date(startTimestamp).toISOString();
         const durationInSeconds = (endTimestamp - startTimestamp) / 1000;
 
         return {
           ...input,
-          timestamp: startTime,
-          duration: durationInSeconds,
+          duration: input.duration + durationInSeconds,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
           options: {
