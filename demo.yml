@@ -33,12 +33,8 @@ tree:
         - timer-start
         - measure-webpage
         - timer-stop
-        - timer-start
         - green-hosting
-        - timer-stop
-        - timer-start
         - co2js
-        - timer-stop
       config:
         co2js:
           type: swd
@@ -51,4 +47,4 @@ tree:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
           url: https://www.tngtech.com/
-          resets: [true, false, false]
+          resets: [true]

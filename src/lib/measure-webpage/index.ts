@@ -1,4 +1,5 @@
 import puppeteer, {
+  HTTPRequest,
   HTTPResponse,
   KnownDevices,
   Page,
@@ -12,25 +13,32 @@ import {buildErrorMessage} from '../../util/helpers.js';
 import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types/common';
 
+type MeasurePageOptions = {
+  reload: boolean;
+  cacheEnabled: boolean;
+  scrollToBottom?: boolean;
+};
+
 type Resource = {
   url: string;
   size: number;
   type: ResourceType;
   fromCache: boolean;
+  fromServiceWorker: boolean;
 };
 
 type Device = keyof typeof KnownDevices;
 
-// TODO dataReloadRation doesn't work... Not sure what I am doing wrong.
-// TODO Cookies?
-// TODO manipulate timestamp?
-// TODO Page.setJavaScriptEnabled() method
+// TODO
+// emulateNetworkConditions, throttling
+// login pages
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
 ): PluginInterface => {
   const errorBuilder = buildErrorMessage(MeasureWebpage.name);
   const metadata = {
     kind: 'execute',
+    version: '0.1.0',
   };
 
   /**
@@ -45,13 +53,14 @@ export const MeasureWebpage = (
       validateGlobalConfig(),
       validateConfig(config)
     );
-    console.log('VALIDATED CONFIG: ', validateConfig(config));
+
     return await Promise.all(
       inputs.map(async input => {
         const validInput = Object.assign(input, validateSingleInput(input));
         const {pageWeight, resourceTypeWeights, dataReloadRatio} =
-          await measurePageWithReloadRatio(
+          await measurePage(
             validInput.url,
+            !mergedValidatedConfig?.options?.dataReloadRatio,
             mergedValidatedConfig
           );
 
@@ -61,17 +70,34 @@ export const MeasureWebpage = (
           'network/data/resources/bytes': resourceTypeWeights,
           options: {
             ...input.options,
-            dataReloadRatio: dataReloadRatio,
+            dataReloadRatio,
           },
         };
       })
     );
   };
 
-  const measurePageWithReloadRatio = async (
+  const measurePage = async (
     url: string,
+    computeReloadRatio: boolean,
     config?: ConfigParams
   ) => {
+    const requestHandler = (interceptedRequest: HTTPRequest) => {
+      const headers = Object.assign({}, interceptedRequest.headers(), {
+        ...(config?.headers?.accept && {
+          accept: `${config.headers.accept}`,
+        }),
+        ...(config?.headers['accept-encoding'] && {
+          'accept-encoding': `${
+            Array.isArray(config.headers['accept-encoding'])
+              ? config.headers['accept-encoding'].join(', ')
+              : config.headers['accept-encoding']
+          }`,
+        }),
+      });
+      interceptedRequest.continue({headers});
+    };
+
     try {
       const browser = await puppeteer.launch();
 
@@ -83,55 +109,30 @@ export const MeasureWebpage = (
         if (config?.mobileDevice) {
           await page.emulate(KnownDevices[config.mobileDevice as Device]);
         }
+        if (config?.switchOffJavaScript) {
+          await page.setJavaScriptEnabled(false);
+        }
+
         await page.setRequestInterception(true);
+        page.on('request', requestHandler);
 
-        page.on('request', interceptedRequest => {
-          const headers = Object.assign({}, interceptedRequest.headers(), {
-            'cache-control': 'no-cache', // force loading from server to get most recent state
-            pragma: 'no-cache',
-            ...(config?.headers?.accept && {
-              accept: `${config.headers.accept}`,
-            }),
-            ...(config?.headers['accept-encoding'] && {
-              'accept-encoding': `${
-                Array.isArray(config.headers['accept-encoding'])
-                  ? config.headers['accept-encoding'].join(', ')
-                  : config.headers['accept-encoding']
-              }`,
-            }),
-          });
-          interceptedRequest.continue({headers});
-        });
-
-        const {
-          pageWeight: pageWeightInitial,
-          resourceTypeWeights: resourceTypeWeightsInitial,
-          cacheWeight: cacheWeightInitial,
-        } = await measurePage(page, url, {
+        const initialResources = await loadPageResources(page, url, {
           reload: false,
           cacheEnabled: false,
           scrollToBottom: config?.scrollToBottom,
         });
 
-        const {pageWeight: pageWeightReload, cacheWeight: cacheWeightReload} =
-          await measurePage(page, url, {
-            reload: true,
-            cacheEnabled: true,
-            scrollToBottom: config?.scrollToBottom,
-          });
-        console.log('cacheWeightInitial: ', cacheWeightInitial);
-        console.log('cacheWeightReload: ', cacheWeightReload);
+        const reloadedResources = await loadPageResources(page, url, {
+          reload: true,
+          cacheEnabled: true,
+          scrollToBottom: config?.scrollToBottom,
+        });
 
-        const dataReloadRatio =
-          (pageWeightReload - cacheWeightReload) / pageWeightReload;
-        if (cacheWeightInitial > 0) {
-          console.warn('Initial page load contained resources from cache.');
-        }
-        return {
-          pageWeight: pageWeightInitial,
-          resourceTypeWeights: resourceTypeWeightsInitial,
-          dataReloadRatio,
-        };
+        return computeMetrics(
+          initialResources,
+          reloadedResources,
+          computeReloadRatio
+        );
       } finally {
         await browser.close();
       }
@@ -144,43 +145,43 @@ export const MeasureWebpage = (
     }
   };
 
-  const measurePage = async (
+  const loadPageResources = async (
     page: Page,
     url: string,
-    {
-      reload,
-      cacheEnabled,
-      scrollToBottom,
-    }: {reload: boolean; cacheEnabled: boolean; scrollToBottom?: boolean}
+    {reload, cacheEnabled, scrollToBottom}: MeasurePageOptions
   ) => {
+    const pageResources: Resource[] = [];
+
+    const responseHandler = async (response: HTTPResponse) => {
+      try {
+        // TODO attempt to handle errors of possible preflight requests
+        // example www.tagesschau.de
+        // ProtocolError: Could not load body for this request. This might happen if the request is a preflight request.
+        if (
+          response.status() !== 204 &&
+          response.status() !== 304 &&
+          response.request().method() !== 'OPTIONS'
+        ) {
+          const resource: Resource = {
+            url: response.url(),
+            size: (await response.buffer()).length,
+            fromCache: response.fromCache(),
+            fromServiceWorker: response.fromServiceWorker(),
+            type: response.request().resourceType(),
+          };
+          pageResources.push(resource);
+        }
+      } catch (error) {
+        console.error(
+          `MeasureWebpage: Error accessing response body: ${error}`
+        );
+      }
+    };
+
     try {
       await page.setCacheEnabled(cacheEnabled);
-      const pageResources: Resource[] = [];
 
-      page.on('response', async (response: HTTPResponse) => {
-        try {
-          // attempt to handle errors of possible preflight requests
-          // example www.tagesschau.de
-          // ProtocolError: Could not load body for this request. This might happen if the request is a preflight request.
-          if (
-            response.status() !== 204 &&
-            response.status() !== 304 &&
-            response.request().method() !== 'OPTIONS'
-          ) {
-            const resource = {
-              url: response.url(),
-              size: (await response.buffer()).length,
-              fromCache: response.fromCache(),
-              type: response.request().resourceType(),
-            };
-            pageResources.push(resource);
-          }
-        } catch (error) {
-          console.error(
-            `MeasureWebpage: Error accessing response body: ${error}`
-          );
-        }
-      });
+      page.on('response', responseHandler);
 
       if (!reload) {
         await page.goto(url, {waitUntil: 'networkidle0'});
@@ -188,53 +189,15 @@ export const MeasureWebpage = (
         await page.reload({waitUntil: 'networkidle0'});
       }
 
+      page.off('response', responseHandler);
+
       if (scrollToBottom) {
         // await page.screenshot({path: './TOP.png'});
-        await page.evaluate(async () => {
-          await new Promise<void>(resolve => {
-            let totalHeight = 0;
-            const distance = 100; // Distance to scroll each time
-            const timer = setInterval(() => {
-              // attempted to load dom lib only locally, but doesn't work yet -> activated globally
-              const scrollHeight = document.body.scrollHeight;
-              window.scrollBy(0, distance);
-              totalHeight += distance;
-
-              if (totalHeight >= scrollHeight) {
-                clearInterval(timer);
-                resolve();
-              }
-            }, 100);
-          });
-        });
+        await page.evaluate(scrollThroughPage);
         // await page.screenshot({path: './BOTTOM.png'});
       }
 
-      const resourceTypeWeights = pageResources.reduce(
-        (acc, resource) => {
-          if (resource.type in acc) {
-            acc[resource.type] += resource.size;
-          } else {
-            acc[resource.type] = resource.size;
-          }
-          return acc;
-        },
-        {} as Record<ResourceType, number>
-      );
-      const pageWeight = Object.values(resourceTypeWeights).reduce(
-        (acc, resourceTypeSize) => acc + resourceTypeSize,
-        0
-      );
-      const cacheWeight = pageResources.reduce(
-        (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
-        0
-      );
-
-      return {
-        pageWeight,
-        resourceTypeWeights,
-        cacheWeight,
-      };
+      return pageResources;
     } catch (error) {
       throw new Error(
         errorBuilder({
@@ -242,6 +205,76 @@ export const MeasureWebpage = (
         })
       );
     }
+  };
+
+  const scrollThroughPage = async () => {
+    await new Promise<void>(resolve => {
+      let totalHeight = 0;
+      const distance = 100;
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+  };
+
+  const computeMetrics = (
+    initialResources: Resource[],
+    reloadResources: Resource[],
+    computeReloadRatio: boolean
+  ) => {
+    const resourceTypeWeights = initialResources.reduce(
+      (acc, resource) => {
+        if (resource.type in acc) {
+          acc[resource.type] += resource.size;
+        } else {
+          acc[resource.type] = resource.size;
+        }
+        return acc;
+      },
+      {} as Record<ResourceType, number>
+    );
+    const initialPageWeight = Object.values(resourceTypeWeights).reduce(
+      (acc, resourceTypeSize) => acc + resourceTypeSize,
+      0
+    );
+
+    let dataReloadRatio: number | undefined;
+    if (computeReloadRatio) {
+      const initialCacheWeight = initialResources.reduce(
+        (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
+        0
+      );
+      if (initialCacheWeight > 0) {
+        console.warn('Initial page load contained resources from cache.');
+      }
+      const reloadPageWeight = reloadResources.reduce(
+        (acc, resource) => acc + resource.size,
+        0
+      );
+
+      const assumeFromCache = initialPageWeight - reloadPageWeight;
+      const browserCache = reloadResources.reduce(
+        (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
+        0
+      );
+      const assumedCacheWeight = assumeFromCache + browserCache;
+
+      dataReloadRatio =
+        (initialPageWeight - assumedCacheWeight) / initialPageWeight;
+    }
+
+    return {
+      pageWeight: initialPageWeight,
+      resourceTypeWeights,
+      dataReloadRatio,
+    };
   };
 
   /**
@@ -271,6 +304,7 @@ export const MeasureWebpage = (
       timeout: z.number().gte(0).optional(),
       mobileDevice: z.string().optional(),
       scrollToBottom: z.boolean().optional(),
+      switchOffJavaScript: z.boolean().optional(),
       headers: z
         .object({
           accept: z.string().optional(),
@@ -278,6 +312,11 @@ export const MeasureWebpage = (
             .array(z.enum(ALLOWED_ENCODINGS))
             .or(z.string(z.enum(ALLOWED_ENCODINGS)))
             .optional(),
+        })
+        .optional(),
+      options: z
+        .object({
+          dataReloadRatio: z.number().optional(),
         })
         .optional(),
     })

@@ -38,7 +38,7 @@ name: timer-demo
 description: example manifest invoking timer methods
 tags:
 initialize:
-  models:
+  plugins:
     "timer-start":
       method: TimerStart
       path: '@alexzurbonsen/if-webpage-models-cjs'
