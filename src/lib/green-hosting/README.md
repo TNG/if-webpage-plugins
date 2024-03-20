@@ -4,15 +4,9 @@
 
 # Parameters
 
-## model config
-
-- ``:
-
 ## observations
 
 - `url`: the url of web page that is checked for green hosting.
-
-Valid formats: to be checked.
 
 ## Returns
 
