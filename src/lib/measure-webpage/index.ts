@@ -7,9 +7,9 @@ import puppeteer, {
 } from 'puppeteer';
 import {z} from 'zod';
 
-import {allDefined, validate} from '../../util/validations.js';
+import {allDefined, validate} from '../../util/validations';
 
-import {buildErrorMessage} from '../../util/helpers.js';
+import {buildErrorMessage} from '../../util/helpers';
 import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types/common';
 

@@ -2,7 +2,7 @@ import {hosting} from '@tgwf/co2';
 import {getDomain} from 'tldjs';
 import {z} from 'zod';
 
-import {allDefined, validate} from '../../util/validations.js';
+import {allDefined, validate} from '../../util/validations';
 
 import {PluginInterface} from '../../interfaces';
 import {PluginParams} from '../../types/common';

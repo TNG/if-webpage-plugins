@@ -1,2 +1,2 @@
-export {TimerStart} from './start.js';
-export {TimerStop} from './stop.js';
+export {TimerStart} from './start';
+export {TimerStop} from './stop';
