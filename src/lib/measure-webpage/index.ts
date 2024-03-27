@@ -3,6 +3,7 @@ import puppeteer, {
   HTTPResponse,
   KnownDevices,
   Page,
+  PredefinedNetworkConditions,
   ResourceType,
 } from 'puppeteer';
 import {z} from 'zod';
@@ -30,8 +31,8 @@ type Resource = {
 type Device = keyof typeof KnownDevices;
 
 // TODO
-// emulateNetworkConditions, throttling
-// login pages
+// does emulateNetworkConditions do anything valuable?
+// deal with pages that return 204 or 304 status codes
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
 ): PluginInterface => {
@@ -108,6 +109,9 @@ export const MeasureWebpage = (
         }
         if (config?.mobileDevice) {
           await page.emulate(KnownDevices[config.mobileDevice as Device]);
+        }
+        if (config?.emulateNetworkConditions) {
+          await page.emulateNetworkConditions(config.emulateNetworkConditions);
         }
         if (config?.switchOffJavaScript) {
           await page.setJavaScriptEnabled(false);
@@ -303,6 +307,7 @@ export const MeasureWebpage = (
     .object({
       timeout: z.number().gte(0).optional(),
       mobileDevice: z.string().optional(),
+      emulateNetworkConditions: z.string().optional(),
       scrollToBottom: z.boolean().optional(),
       switchOffJavaScript: z.boolean().optional(),
       headers: z
@@ -323,14 +328,27 @@ export const MeasureWebpage = (
     .optional()
     .refine(
       data => {
-        if (data?.mobileDevice) {
-          return KnownDevices[data?.mobileDevice as Device];
-        }
-        return true;
+        return data?.mobileDevice
+          ? KnownDevices[data.mobileDevice as Device]
+          : true;
       },
       {
         message: `Mobile device must be one of: ${Object.keys(
           KnownDevices
+        ).join(', ')}.`,
+      }
+    )
+    .refine(
+      data => {
+        return data?.emulateNetworkConditions
+          ? PredefinedNetworkConditions[
+              data.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
+            ]
+          : true;
+      },
+      {
+        message: `Network condition must be one of: ${Object.keys(
+          PredefinedNetworkConditions
         ).join(', ')}.`,
       }
     );

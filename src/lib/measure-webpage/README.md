@@ -8,7 +8,10 @@ The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the we
 
 ## model config
 
+optional config parameters:
+
 - `mobileDevice:`: You can pick a mobile device to emulate. Must be one of puppeteer's known devices: https://pptr.dev/api/puppeteer.knowndevices
+- `emulateNetworkConditions`: You can pick one of puppeteer's predefined network conditions: https://pptr.dev/api/puppeteer.predefinednetworkconditions
 - `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default is false.
 - `switchOffJavaScript`: If true, JavaScript is disabled. If false, JavaScript is enabled. Default is false.
 - `timeout`: Maximum wait time in milliseconds. Pass 0 to disable the timeout. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
