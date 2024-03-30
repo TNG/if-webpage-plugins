@@ -2,6 +2,8 @@ name: green-hosting-demo
 description: example impl invoking green-hosting model
 tags:
 initialize:
+  outputs:
+    - yaml
   plugins:
     "timer-start":
       method: TimerStart
@@ -40,11 +42,12 @@ tree:
           type: swd
         measure-webpage:
           mobileDevice: 'iPhone 6'
-          scrollToBottom: true
+          scrollToBottom: false
           headers:
             accept-encoding: [gzip, deflate, br]
+#          lighthouse: true
       inputs:
-        - timestamp: 2024-02-25T00:00 # time when measurement occurred
+        - timestamp: '2024-01-01T00:00:00Z'
           duration: 1
-          url: https://www.tngtech.com/
+          url: https://www.tngtech.com
           resets: [true]
