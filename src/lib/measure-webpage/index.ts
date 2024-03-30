@@ -111,7 +111,7 @@ export const MeasureWebpage = (
         ...(config?.headers?.accept && {
           accept: `${config.headers.accept}`,
         }),
-        ...(config?.headers['accept-encoding'] && {
+        ...(config?.headers?.['accept-encoding'] && {
           'accept-encoding': `${
             Array.isArray(config.headers['accept-encoding'])
               ? config.headers['accept-encoding'].join(', ')
