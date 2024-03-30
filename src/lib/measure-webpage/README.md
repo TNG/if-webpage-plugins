@@ -18,6 +18,7 @@ optional config parameters:
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
+- `lighthouse`: boolean, if true, a lighthouse report is generated
 
 ## observations
 
@@ -29,6 +30,7 @@ optional config parameters:
 - `network/data/resources/bytes`: resources weights by category in bytes
 - `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
+- `lighthouse-report`: file path to the full lighthouse report in html format (if `lighthouse` is set to true in the config)
 
 # Further Info
 

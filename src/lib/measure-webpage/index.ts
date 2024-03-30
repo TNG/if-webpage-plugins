@@ -1,3 +1,6 @@
+import fs from 'fs';
+import lighthouse from 'lighthouse/core/index.cjs';
+import {resolve} from 'path';
 import puppeteer, {
   HTTPRequest,
   HTTPResponse,
@@ -31,7 +34,6 @@ type Resource = {
 type Device = keyof typeof KnownDevices;
 
 // TODO
-// does emulateNetworkConditions do anything valuable?
 // deal with pages that return 204 or 304 status codes
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
@@ -57,18 +59,38 @@ export const MeasureWebpage = (
 
     return await Promise.all(
       inputs.map(async input => {
-        const validInput = Object.assign(input, validateSingleInput(input));
-        const {pageWeight, resourceTypeWeights, dataReloadRatio} =
-          await measurePage(
-            validInput.url,
-            !mergedValidatedConfig?.options?.dataReloadRatio,
-            mergedValidatedConfig
+        const validatedInput = Object.assign(input, validateSingleInput(input));
+        const {
+          pageWeight,
+          resourceTypeWeights,
+          dataReloadRatio,
+          lighthouseResult,
+        } = await measurePage(
+          validatedInput.url,
+          !mergedValidatedConfig?.options?.dataReloadRatio,
+          mergedValidatedConfig
+        );
+
+        let reportPath;
+        if (lighthouseResult) {
+          reportPath = writeReportToFile(
+            lighthouseResult.report,
+            validatedInput
           );
+        }
+
+        console.log(
+          'LIGHTHOUSE AND PUPPETEER WEIGHT: ',
+          lighthouseResult?.lhr.audits['total-byte-weight'].numericValue,
+          ' ',
+          pageWeight
+        );
 
         return {
           ...input,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
+          ...(lighthouseResult ? {'lighthouse-report': reportPath} : {}),
           options: {
             ...input.options,
             dataReloadRatio,
@@ -132,11 +154,27 @@ export const MeasureWebpage = (
           scrollToBottom: config?.scrollToBottom,
         });
 
-        return computeMetrics(
-          initialResources,
-          reloadedResources,
-          computeReloadRatio
-        );
+        let lighthouseResult;
+        if (config?.lighthouse) {
+          lighthouseResult = await lighthouse(
+            url,
+            {
+              output: 'html',
+              logLevel: 'info',
+            },
+            undefined,
+            page
+          );
+        }
+
+        return {
+          ...computeMetrics(
+            initialResources,
+            reloadedResources,
+            computeReloadRatio
+          ),
+          lighthouseResult,
+        };
       } finally {
         await browser.close();
       }
@@ -281,13 +319,40 @@ export const MeasureWebpage = (
     };
   };
 
+  const getEscapedFilePath = (url: string): string => {
+    return url.replace(/[/\\?%*:|"<>]/g, '_');
+  };
+
+  const writeReportToFile = (
+    lighthouseReport: string | string[],
+    validatedInput: PluginParams
+  ): string => {
+    const timestamp = validatedInput['timer/start']
+      ? validatedInput['timer/start']
+      : validatedInput.timestamp;
+    const unescapedOutputPath = resolve(
+      `./lighthouse-report-${validatedInput.url}-${timestamp}.html`
+    );
+    const outputPath = getEscapedFilePath(unescapedOutputPath);
+    fs.writeFileSync(
+      outputPath,
+      Array.isArray(lighthouseReport)
+        ? lighthouseReport.join(' ')
+        : lighthouseReport,
+      'utf8'
+    );
+    return outputPath;
+  };
+
   /**
-   * Validates the input parameters of the puppeteer model.
+   * Validates input parameters.
    */
   const validateSingleInput = (input: PluginParams) => {
     const schema = z
       .object({
         url: z.string(),
+        'timer/start': z.string().datetime().optional(),
+        timestamp: z.string().datetime().optional(),
       })
       .refine(allDefined, {message: '`url` must be provided.'});
 
@@ -324,6 +389,7 @@ export const MeasureWebpage = (
           dataReloadRatio: z.number().optional(),
         })
         .optional(),
+      lighthouse: z.boolean().optional(),
     })
     .optional()
     .refine(
