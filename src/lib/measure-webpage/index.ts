@@ -1,6 +1,5 @@
 import fs from 'fs';
 import lighthouse from 'lighthouse/core/index.cjs';
-import {resolve} from 'path';
 import puppeteer, {
   HTTPRequest,
   HTTPResponse,
@@ -33,8 +32,6 @@ type Resource = {
 
 type Device = keyof typeof KnownDevices;
 
-// TODO
-// deal with pages that return 204 or 304 status codes
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
 ): PluginInterface => {
@@ -91,10 +88,14 @@ export const MeasureWebpage = (
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
           ...(lighthouseResult ? {'lighthouse-report': reportPath} : {}),
-          options: {
-            ...input.options,
-            dataReloadRatio,
-          },
+          ...(input.options || dataReloadRatio
+            ? {
+                options: {
+                  ...input.options,
+                  dataReloadRatio,
+                },
+              }
+            : {}),
         };
       })
     );
@@ -196,23 +197,14 @@ export const MeasureWebpage = (
 
     const responseHandler = async (response: HTTPResponse) => {
       try {
-        // TODO attempt to handle errors of possible preflight requests
-        // example www.tagesschau.de
-        // ProtocolError: Could not load body for this request. This might happen if the request is a preflight request.
-        if (
-          response.status() !== 204 &&
-          response.status() !== 304 &&
-          response.request().method() !== 'OPTIONS'
-        ) {
-          const resource: Resource = {
-            url: response.url(),
-            size: (await response.buffer()).length,
-            fromCache: response.fromCache(),
-            fromServiceWorker: response.fromServiceWorker(),
-            type: response.request().resourceType(),
-          };
-          pageResources.push(resource);
-        }
+        const resource: Resource = {
+          url: response.url(),
+          size: (await response.buffer()).length,
+          fromCache: response.fromCache(),
+          fromServiceWorker: response.fromServiceWorker(),
+          type: response.request().resourceType(),
+        };
+        pageResources.push(resource);
       } catch (error) {
         console.error(
           `MeasureWebpage: Error accessing response body: ${error}`
@@ -319,7 +311,7 @@ export const MeasureWebpage = (
     };
   };
 
-  const getEscapedFilePath = (url: string): string => {
+  const getEscapedFileName = (url: string): string => {
     return url.replace(/[/\\?%*:|"<>]/g, '_');
   };
 
@@ -330,18 +322,17 @@ export const MeasureWebpage = (
     const timestamp = validatedInput['timer/start']
       ? validatedInput['timer/start']
       : validatedInput.timestamp;
-    const unescapedOutputPath = resolve(
-      `./lighthouse-report-${validatedInput.url}-${timestamp}.html`
-    );
-    const outputPath = getEscapedFilePath(unescapedOutputPath);
+    const unescapedFileName = `lighthouse-report-${validatedInput.url}-${timestamp}.html`;
+
+    const fileName = getEscapedFileName(unescapedFileName);
     fs.writeFileSync(
-      outputPath,
+      fileName,
       Array.isArray(lighthouseReport)
         ? lighthouseReport.join(' ')
         : lighthouseReport,
       'utf8'
     );
-    return outputPath;
+    return fileName;
   };
 
   /**

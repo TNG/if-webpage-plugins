@@ -1,8 +1,8 @@
 # MeasureWebpage
 
-> [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
+> [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the resources categorized by type. It can also measure, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with Puppeteer.
+The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the resources categorized by type. It can also measure, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with Puppeteer. It can also generate a Lighthouse report.
 
 # Parameters
 
@@ -30,7 +30,8 @@ optional config parameters:
 - `network/data/resources/bytes`: resources weights by category in bytes
 - `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
-- `lighthouse-report`: file path to the full lighthouse report in html format (if `lighthouse` is set to true in the config)
+- `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `ie` is executed
+  if `lighthouse` is set to true in the config
 
 # Further Info
 
