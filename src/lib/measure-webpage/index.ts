@@ -285,12 +285,18 @@ export const MeasureWebpage = (
   ) => {
     return pageResources.map(resource => {
       const cdpResponse = cdpResponses.get(resource.url);
+      if (!cdpResponse) {
+        console.warn('No encoded data length for resource: ', resource.url);
+      }
       return cdpResponse
         ? ({
             ...resource,
             transferSize: cdpResponse.encodedDataLength,
           } as Resource)
-        : (resource as Resource);
+        : ({
+            ...resource,
+            transferSize: 0,
+          } as Resource);
     });
   };
 
