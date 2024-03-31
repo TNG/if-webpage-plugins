@@ -1,3 +1,10 @@
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen
+// SPDX SPDX-License-Identifier: MIT
+
+// for parts marked as originating from Lighthouse:
+// SPDX-FileCopyrightText: 2016 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import fs from 'fs';
 import lighthouse from 'lighthouse/core/index.cjs';
 import puppeteer, {
@@ -255,6 +262,7 @@ export const MeasureWebpage = (
     }
   };
 
+  // modified from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js
   const isNonNetworkRequest = (response: HTTPResponse) => {
     const url = response.request().url();
     return NON_NETWORK_SCHEMES.some(scheme => url.startsWith(`${scheme}:`));
