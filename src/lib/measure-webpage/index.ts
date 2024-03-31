@@ -32,6 +32,16 @@ type Resource = {
 
 type Device = keyof typeof KnownDevices;
 
+// copied from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js#L21
+const NON_NETWORK_SCHEMES = [
+  'blob', // @see https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
+  'data', // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+  'intent', // @see https://developer.chrome.com/docs/multidevice/android/intents/
+  'file', // @see https://en.wikipedia.org/wiki/File_URI_scheme
+  'filesystem', // @see https://developer.mozilla.org/en-US/docs/Web/API/FileSystem
+  'chrome-extension',
+];
+
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
 ): PluginInterface => {
@@ -197,6 +207,9 @@ export const MeasureWebpage = (
 
     const responseHandler = async (response: HTTPResponse) => {
       try {
+        if (isNonNetworkRequest(response)) {
+          return;
+        }
         const resource: Resource = {
           url: response.url(),
           size: (await response.buffer()).length,
@@ -205,6 +218,7 @@ export const MeasureWebpage = (
           type: response.request().resourceType(),
         };
         pageResources.push(resource);
+        console.log('Resource:', resource.url, resource.size, resource.type);
       } catch (error) {
         console.error(
           `MeasureWebpage: Error accessing response body: ${error}`
@@ -227,7 +241,7 @@ export const MeasureWebpage = (
 
       if (scrollToBottom) {
         // await page.screenshot({path: './TOP.png'});
-        await page.evaluate(scrollThroughPage);
+        await page.evaluate(scrollToBottomOfPage);
         // await page.screenshot({path: './BOTTOM.png'});
       }
 
@@ -241,7 +255,12 @@ export const MeasureWebpage = (
     }
   };
 
-  const scrollThroughPage = async () => {
+  const isNonNetworkRequest = (response: HTTPResponse) => {
+    const url = response.request().url();
+    return NON_NETWORK_SCHEMES.some(scheme => url.startsWith(`${scheme}:`));
+  };
+
+  const scrollToBottomOfPage = async () => {
     await new Promise<void>(resolve => {
       let totalHeight = 0;
       const distance = 100;
@@ -311,10 +330,6 @@ export const MeasureWebpage = (
     };
   };
 
-  const getEscapedFileName = (url: string): string => {
-    return url.replace(/[/\\?%*:|"<>]/g, '_');
-  };
-
   const writeReportToFile = (
     lighthouseReport: string | string[],
     validatedInput: PluginParams
@@ -333,6 +348,10 @@ export const MeasureWebpage = (
       'utf8'
     );
     return fileName;
+  };
+
+  const getEscapedFileName = (url: string): string => {
+    return url.replace(/[/\\?%*:|"<>]/g, '_');
   };
 
   /**
