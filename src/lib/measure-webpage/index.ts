@@ -29,13 +29,15 @@ type MeasurePageOptions = {
   scrollToBottom?: boolean;
 };
 
-type Resource = {
+type ResourceBase = {
   url: string;
-  size: number;
+  resourceSize: number;
   type: ResourceType;
   fromCache: boolean;
   fromServiceWorker: boolean;
 };
+
+type Resource = ResourceBase & {transferSize: number};
 
 type Device = keyof typeof KnownDevices;
 
@@ -210,22 +212,22 @@ export const MeasureWebpage = (
     url: string,
     {reload, cacheEnabled, scrollToBottom}: MeasurePageOptions
   ) => {
-    const pageResources: Resource[] = [];
+    const pageResources: ResourceBase[] = [];
 
     const responseHandler = async (response: HTTPResponse) => {
       try {
         if (isNonNetworkRequest(response)) {
           return;
         }
-        const resource: Resource = {
+
+        const resource: ResourceBase = {
           url: response.url(),
-          size: (await response.buffer()).length,
+          resourceSize: (await response.buffer()).length,
           fromCache: response.fromCache(),
           fromServiceWorker: response.fromServiceWorker(),
           type: response.request().resourceType(),
         };
         pageResources.push(resource);
-        console.log('Resource:', resource.url, resource.size, resource.type);
       } catch (error) {
         console.error(
           `MeasureWebpage: Error accessing response body: ${error}`
@@ -235,6 +237,21 @@ export const MeasureWebpage = (
 
     try {
       await page.setCacheEnabled(cacheEnabled);
+
+      const cdpIntermediateStore = new Map<string, {url: string}>();
+      const cdpResponses = new Map<string, {encodedDataLength: number}>();
+      const cdpSession = await page.createCDPSession();
+      await cdpSession.send('Network.enable');
+      cdpSession.on('Network.responseReceived', event => {
+        cdpIntermediateStore.set(event.requestId, {url: event.response.url});
+      });
+      cdpSession.on('Network.loadingFinished', event => {
+        const response = cdpIntermediateStore.get(event.requestId);
+        response &&
+          cdpResponses.set(response.url, {
+            encodedDataLength: event.encodedDataLength,
+          });
+      });
 
       page.on('response', responseHandler);
 
@@ -252,7 +269,7 @@ export const MeasureWebpage = (
         // await page.screenshot({path: './BOTTOM.png'});
       }
 
-      return pageResources;
+      return mergeCdpResponsesIntoResources(pageResources, cdpResponses);
     } catch (error) {
       throw new Error(
         errorBuilder({
@@ -260,6 +277,21 @@ export const MeasureWebpage = (
         })
       );
     }
+  };
+
+  const mergeCdpResponsesIntoResources = (
+    pageResources: ResourceBase[],
+    cdpResponses: Map<string, {encodedDataLength: number}>
+  ) => {
+    return pageResources.map(resource => {
+      const cdpResponse = cdpResponses.get(resource.url);
+      return cdpResponse
+        ? ({
+            ...resource,
+            transferSize: cdpResponse.encodedDataLength,
+          } as Resource)
+        : (resource as Resource);
+    });
   };
 
   // modified from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js
@@ -293,9 +325,9 @@ export const MeasureWebpage = (
     const resourceTypeWeights = initialResources.reduce(
       (acc, resource) => {
         if (resource.type in acc) {
-          acc[resource.type] += resource.size;
+          acc[resource.type] += resource.transferSize;
         } else {
-          acc[resource.type] = resource.size;
+          acc[resource.type] = resource.transferSize;
         }
         return acc;
       },
@@ -309,20 +341,22 @@ export const MeasureWebpage = (
     let dataReloadRatio: number | undefined;
     if (computeReloadRatio) {
       const initialCacheWeight = initialResources.reduce(
-        (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
+        (acc, resource) =>
+          acc + (resource.fromCache ? resource.transferSize : 0),
         0
       );
       if (initialCacheWeight > 0) {
         console.warn('Initial page load contained resources from cache.');
       }
       const reloadPageWeight = reloadResources.reduce(
-        (acc, resource) => acc + resource.size,
+        (acc, resource) => acc + resource.transferSize,
         0
       );
 
       const assumeFromCache = initialPageWeight - reloadPageWeight;
       const browserCache = reloadResources.reduce(
-        (acc, resource) => acc + (resource.fromCache ? resource.size : 0),
+        (acc, resource) =>
+          acc + (resource.fromCache ? resource.transferSize : 0),
         0
       );
       const assumedCacheWeight = assumeFromCache + browserCache;
