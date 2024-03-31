@@ -261,13 +261,14 @@ export const MeasureWebpage = (
         await page.reload({waitUntil: 'networkidle0'});
       }
 
-      page.off('response', responseHandler);
-
       if (scrollToBottom) {
         // await page.screenshot({path: './TOP.png'});
         await page.evaluate(scrollToBottomOfPage);
         // await page.screenshot({path: './BOTTOM.png'});
       }
+
+      page.off('response', responseHandler);
+      await cdpSession.detach();
 
       return mergeCdpResponsesIntoResources(pageResources, cdpResponses);
     } catch (error) {
