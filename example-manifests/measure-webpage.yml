@@ -37,13 +37,10 @@ tree:
         co2js:
           type: swd
         measure-webpage:
-          mobileDevice: 'iPhone 6'
-#          headers:
-#            accept-encoding: [gzip, deflate, br]
           lighthouse: true
-#          scrollToBottom: true
+          scrollToBottom: true
       inputs:
         - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
           duration: 1 # will be replaced by the time it took to execute the measure-webpage plugin
-          url: https://www.tagesschau.de
+          url: https://www.tngtech.com
           resets: [true] # tells the timer-stop method to replace timestamp and duration

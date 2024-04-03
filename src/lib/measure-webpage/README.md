@@ -2,7 +2,7 @@
 
 > [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the resources categorized by type. It can also measure, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with Puppeteer. It can also generate a Lighthouse report.
+The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the resources categorized by type. It can also approximate, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with Puppeteer. It can also generate a Lighthouse report.
 
 # Parameters
 
@@ -12,9 +12,8 @@ The following parameters are optional and can be set in the global config or in 
 
 - `mobileDevice:`: You can pick a mobile device to emulate. Must be one of puppeteer's known devices: https://pptr.dev/api/puppeteer.knowndevices
 - `emulateNetworkConditions`: You can pick one of puppeteer's predefined network conditions: https://pptr.dev/api/puppeteer.predefinednetworkconditions
-- `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default is false.
-- `switchOffJavaScript`: If true, JavaScript is disabled. If false, JavaScript is enabled. Default is false.
-- `timeout`: Maximum wait time in milliseconds for page load. Pass 0 to disable the timeout. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
+- `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default: false.
+- `timeout`: Maximum wait time in milliseconds for page load. Pass 0 to disable the timeout. Default: 30000 ms. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
@@ -38,13 +37,20 @@ If parameters are provided twice, the node config is taking precedence.
 
 # Further Info
 
-Cookies are not supported.
-Device emulation only sets screen size and user agent. It does not throttle network speed or CPU to match device capabilities.
+The plugin uses Puppeteer to measure the weight of a webpage and its resource categories in bytes, where weight refers to the transfer size of the resources.
 
-The measurement of `dataReloadRatio` is based on incomplete knowledge.
+The page weight (the number of bytes transferred to load the page) can be feed into the co2js plugin to estimate the carbon emissions associated with the page load.
 
-TODO: explain approach for calculation and its weaknesses (the ones I know of, dynamic content, timing, service workerts)
+Several config options are provided to modify the loading of the page, e.g. emulating a mobile device and network conditions. By scrolling to the bottom of the page one can also take into account lazy loaded resources. Custome accept and accept-encoding request headers can also be provided.
 
+The plugin can also approximate the `dataReloadRatio` that is needed for carbon emissions estimation with the Sustainable Webdesign Model (provided by the co2js plugin). To approximate the `dataReloadRatio` the page weight is calculated for a first visit and a return visit. The difference `weight of initial load - weight of reload` plus the weight of the resources that were loaded from browser cache on reload, is assumed to be the weight of resources that did not need reloading.
+This assumption can be off. For example if there is a lot of dynamic content on the page, that is requested only under certain conditions or at specific times. Also, cached resources provided by service workers are not taken into account. Possibly, content personalization can also distort the measurement if initial load and reload do not get comparable content.
+
+Additionally, the plugin can also generate a lighthouse report to provide additional insights into the performance of the webpage.
+
+Further remarks:
+- Cookies are not supported.
+- Device emulation only sets screen size and user agent. It does not throttle network speed or CPU to match device capabilities.
 
 ## Manifest
 
