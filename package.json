@@ -1,13 +1,13 @@
 {
-  "name": "@alexzurbonsen/if-webpage-models-cjs",
-  "description": "Impact Framework - Models for Measuring Webpages CommonJS",
+  "name": "@wr24-greenit/if-webpage-models",
+  "description": "Impact Framework - Models for Measuring Webpages (CommonJS)",
   "version": "v0.0.1",
   "author": {
     "name": "A. zur Bonsen, TNG Technology Consulting GmbH",
     "email": "alexander.zur.bonsen@tngtech.com"
   },
   "bugs": {
-    "url": "https://github.com/wr24-greenit/if-webpage-models-cjs/issues"
+    "url": "https://github.com/wr24-greenit/if-webpage-models/issues"
   },
   "dependencies": {
     "@tgwf/co2": "^0.14.3",
@@ -47,7 +47,7 @@
   "files": [
     "build"
   ],
-  "homepage": "https://github.com/wr24-greenit/if-webpage-models-cjs",
+  "homepage": "https://github.com/wr24-greenit/if-webpage-models",
   "keywords": [
     "green software",
     "green software foundation",
@@ -62,7 +62,7 @@
     "access": "public"
   },
   "repository": {
-    "url": "https://github.com/alexzurbonsen/if-webpage-models-cjs.git"
+    "url": "https://github.com/wr24-greenit/if-webpage-models.git"
   },
   "scripts": {
     "build": "rm -rf build && tsc --project tsconfig.json",
