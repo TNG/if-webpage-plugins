@@ -163,10 +163,11 @@ export const MeasureWebpage = (
           await page.emulate(KnownDevices[config.mobileDevice as Device]);
         }
         if (config?.emulateNetworkConditions) {
-          await page.emulateNetworkConditions(config.emulateNetworkConditions);
-        }
-        if (config?.switchOffJavaScript) {
-          await page.setJavaScriptEnabled(false);
+          await page.emulateNetworkConditions(
+            PredefinedNetworkConditions[
+              config.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
+            ]
+          );
         }
 
         await page.setRequestInterception(true);
@@ -442,7 +443,6 @@ export const MeasureWebpage = (
       mobileDevice: z.string().optional(),
       emulateNetworkConditions: z.string().optional(),
       scrollToBottom: z.boolean().optional(),
-      switchOffJavaScript: z.boolean().optional(),
       headers: z
         .object({
           accept: z.string().optional(),
@@ -463,7 +463,7 @@ export const MeasureWebpage = (
     .refine(
       data => {
         return data?.mobileDevice
-          ? KnownDevices[data.mobileDevice as Device]
+          ? !!KnownDevices[data.mobileDevice as Device]
           : true;
       },
       {
@@ -475,7 +475,7 @@ export const MeasureWebpage = (
     .refine(
       data => {
         return data?.emulateNetworkConditions
-          ? PredefinedNetworkConditions[
+          ? !!PredefinedNetworkConditions[
               data.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
             ]
           : true;

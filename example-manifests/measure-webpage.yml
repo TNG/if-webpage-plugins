@@ -1,5 +1,5 @@
-name: green-hosting-demo
-description: example impl invoking green-hosting model
+name: measure-webpage-demo
+description: example manifest for estimating carbon emissions of a webpage
 tags:
 initialize:
   outputs:
@@ -7,27 +7,23 @@ initialize:
   plugins:
     "timer-start":
       method: TimerStart
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      path: '@wr24-greenit/if-webpage-models'
     "timer-stop":
       method: TimerStop
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      path: '@wr24-greenit/if-webpage-models'
     "green-hosting":
       method: GreenHosting
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      path: '@wr24-greenit/if-webpage-models'
     "measure-webpage":
       method: MeasureWebpage
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      path: '@wr24-greenit/if-webpage-models'
     "co2js":
       method: Co2js
-      path: '@grnsft/if-unofficial-plugins'
+      path: '@wr24-greenit/if-webpage-models'
       global-config:
         options:
           firstVisitPercentage: 0.9
           returnVisitPercentage: 0.1
-          gridIntensity:
-            device: 560.98
-            dataCenter:
-              country: 'TWN'
 tree:
   children:
     child:
@@ -42,12 +38,12 @@ tree:
           type: swd
         measure-webpage:
           mobileDevice: 'iPhone 6'
-          scrollToBottom: false
-          headers:
-            accept-encoding: [gzip, deflate, br]
-#          lighthouse: true
+#          headers:
+#            accept-encoding: [gzip, deflate, br]
+          lighthouse: true
+#          scrollToBottom: true
       inputs:
-        - timestamp: '2024-01-01T00:00:00Z'
-          duration: 1
-          url: https://www.tngtech.com
-          resets: [true]
+        - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
+          duration: 1 # will be replaced by the time it took to execute the measure-webpage plugin
+          url: https://www.tagesschau.de
+          resets: [true] # tells the timer-stop method to replace timestamp and duration
