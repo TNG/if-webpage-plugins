@@ -216,11 +216,11 @@ export const MeasureWebpage = (
 
     const responseHandler = async (response: HTTPResponse) => {
       try {
-        if (isNonNetworkRequest(response)) {
+        if (isFromNonNetworkRequest(response) || hasNoResponseBody(response)) {
           return;
         }
 
-        const resource: ResourceBase = {
+        const resource = {
           url: response.url(),
           resourceSize: (await response.buffer()).length,
           fromCache: response.fromCache(),
@@ -280,6 +280,20 @@ export const MeasureWebpage = (
     }
   };
 
+  // modified from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js
+  const isFromNonNetworkRequest = (response: HTTPResponse) => {
+    const url = response.request().url();
+    return NON_NETWORK_SCHEMES.some(scheme => url.startsWith(`${scheme}:`));
+  };
+
+  const hasNoResponseBody = (response: HTTPResponse) => {
+    return (
+      response.status() === 204 &&
+      response.status() === 304 &&
+      response.request().method() !== 'OPTIONS'
+    );
+  };
+
   const mergeCdpResponsesIntoResources = (
     pageResources: ResourceBase[],
     cdpResponses: Map<string, {encodedDataLength: number}>
@@ -299,12 +313,6 @@ export const MeasureWebpage = (
             transferSize: 0,
           } as Resource);
     });
-  };
-
-  // modified from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js
-  const isNonNetworkRequest = (response: HTTPResponse) => {
-    const url = response.request().url();
-    return NON_NETWORK_SCHEMES.some(scheme => url.startsWith(`${scheme}:`));
   };
 
   const scrollToBottomOfPage = async () => {
