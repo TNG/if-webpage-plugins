@@ -51,6 +51,16 @@ const NON_NETWORK_SCHEMES = [
   'chrome-extension',
 ];
 
+const ALLOWED_ENCODINGS = [
+  'gzip',
+  'compress',
+  'deflate',
+  'br',
+  'zstd',
+  'identity',
+  '*',
+] as const;
+
 export const MeasureWebpage = (
   globalConfig?: ConfigParams
 ): PluginInterface => {
@@ -419,22 +429,13 @@ export const MeasureWebpage = (
       .object({
         url: z.string(),
         'timer/start': z.string().datetime().optional(),
-        timestamp: z.string().datetime().optional(),
+        timestamp: z.string().datetime(),
       })
       .refine(allDefined, {message: '`url` must be provided.'});
 
     return validate<z.infer<typeof schema>>(schema, input);
   };
 
-  const ALLOWED_ENCODINGS = [
-    'gzip',
-    'compress',
-    'deflate',
-    'br',
-    'zstd',
-    'identity',
-    '*',
-  ] as const;
   const configSchema = z
     .object({
       timeout: z.number().gte(0).optional(),

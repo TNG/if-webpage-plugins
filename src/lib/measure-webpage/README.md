@@ -6,23 +6,26 @@ The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the we
 
 # Parameters
 
-## model config
+## Global Config and Config
 
-optional config parameters:
+The following parameters are optional and can be set in the global config or in the config of the plugin node.
 
 - `mobileDevice:`: You can pick a mobile device to emulate. Must be one of puppeteer's known devices: https://pptr.dev/api/puppeteer.knowndevices
 - `emulateNetworkConditions`: You can pick one of puppeteer's predefined network conditions: https://pptr.dev/api/puppeteer.predefinednetworkconditions
 - `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default is false.
 - `switchOffJavaScript`: If true, JavaScript is disabled. If false, JavaScript is enabled. Default is false.
-- `timeout`: Maximum wait time in milliseconds. Pass 0 to disable the timeout. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
+- `timeout`: Maximum wait time in milliseconds for page load. Pass 0 to disable the timeout. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
 - `lighthouse`: boolean, if true, a lighthouse report is generated
 
-## observations
+If parameters are provided twice, the node config is taking precedence.
 
-- `url`: the URL of the webpage to measure (has to include the protocl type, like https://)
+## Inputs
+
+- `url`: the URL of the webpage to measure (has to include the protocol type, like https://)
+- `timestamp`: a timestamp for the observation
 
 ## Returns
 
@@ -49,7 +52,7 @@ The following is an example of how `MeasureWebpage` can be invoked using a manif
 
 ```yaml
 name: measure-webpage-demo
-description: example manifest invoking MeasureWebpage method
+description: example manifest invoking the MeasureWebpage method
 tags:
 initialize:
   models:
