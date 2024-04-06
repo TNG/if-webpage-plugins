@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Green Software Foundation
+// SPDX-License-Identifier: MIT
+
 import {ConfigParams, PluginParams} from '../types/common';
 
 /**

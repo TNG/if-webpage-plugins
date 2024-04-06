@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Alexander zur Bonsen
-// SPDX SPDX-License-Identifier: MIT
+// SPDX SPDX-License-Identifier: Apache-2.0
 
 // for parts marked as originating from Lighthouse:
 // SPDX-FileCopyrightText: 2016 Google LLC

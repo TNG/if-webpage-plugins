@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Green Software Foundation
+// SPDX-License-Identifier: MIT
+
 import {co2} from '@tgwf/co2';
 import {z} from 'zod';
 

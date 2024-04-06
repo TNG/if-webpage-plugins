@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Green Software Foundation
+// SPDX-License-Identifier: MIT
+
 export type KeyValuePair = {
   [key: string]: any;
 };

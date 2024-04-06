@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Green Software Foundation
+// SPDX-License-Identifier: MIT
+
 const CUSTOM_ERRORS = [
   'InputValidationError',
   'UnsupportedValueError',
