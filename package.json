@@ -1,5 +1,5 @@
 {
-  "name": "@wr24-greenit/if-webpage-models",
+  "name": "@wr24-greenit/if-webpage-plugins",
   "description": "Impact Framework - Models for Measuring Webpages (CommonJS)",
   "version": "v0.0.1",
   "author": {
@@ -7,7 +7,7 @@
     "email": "alexander.zur.bonsen@tngtech.com"
   },
   "bugs": {
-    "url": "https://github.com/wr24-greenit/if-webpage-models/issues"
+    "url": "https://github.com/wr24-greenit/if-webpage-plugins/issues"
   },
   "dependencies": {
     "@tgwf/co2": "^0.14.3",
@@ -47,7 +47,7 @@
   "files": [
     "build"
   ],
-  "homepage": "https://github.com/wr24-greenit/if-webpage-models",
+  "homepage": "https://github.com/wr24-greenit/if-webpage-plugins",
   "keywords": [
     "green software",
     "green software foundation",
@@ -62,7 +62,7 @@
     "access": "public"
   },
   "repository": {
-    "url": "https://github.com/wr24-greenit/if-webpage-models.git"
+    "url": "https://github.com/wr24-greenit/if-webpage-plugins.git"
   },
   "scripts": {
     "build": "rm -rf build && tsc --project tsconfig.json",
