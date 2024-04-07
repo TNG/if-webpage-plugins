@@ -2,7 +2,13 @@
 
 ## Introduction
 
-[![Demo Video Link](assets/demo_video_screenshot.png)](https://www.youtube.com/watch?v=oY9IxVzRbSw)
+<p align="center">
+<a href="https://www.youtube.com/watch?v=oY9IxVzRbSw">
+<img src="assets/demo_video_screenshot.png" alt="Demo Video Link" width="550px" />
+</a>
+<br>
+Click on the image to watch the demo video
+</p>
 
 With the plugins contained in this repo you can estimate the carbon emissions of a webpage. The plugins are designed to be used with the [Impact Framework](https://github.com/Green-Software-Foundation/if). You can assemble a pipeline with them that follows the same methodology as [websitecarbon.com](https://websitecarbon.com) or [ecograder.com](https://ecograder.com). See below for an example.
 
