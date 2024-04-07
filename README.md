@@ -1,5 +1,9 @@
 # Impact Framework - Plugins for Estimating Carbon Emissions of Webpages
 
+## Introduction
+
+[![Demo Video Link](assets/demo_video_screenshot.png)](https://www.youtube.com/watch?v=oY9IxVzRbSw)
+
 With the plugins contained in this repo you can estimate the carbon emissions of a webpage. The plugins are designed to be used with the [Impact Framework](https://github.com/Green-Software-Foundation/if). You can assemble a pipeline with them that follows the same methodology as [websitecarbon.com](https://websitecarbon.com) or [ecograder.com](https://ecograder.com). See below for an example.
 
 As the two aforementioned carbon estimation websites, the pipeline is using the [sustainable web design model](https://sustainablewebdesign.org/calculating-digital-emissions/) (swd) for carbon estimation. It is provided by the co2js plugin [1]. The swd model has a broad scope and includes all essential segments of the network into its estimation
@@ -9,7 +13,7 @@ As the two aforementioned carbon estimation websites, the pipeline is using the 
 - data centre use
 - hardware production
 
-It makes the complexity of estimating the emissions of all this segments accessible by focusing on the number of transferred bytes on webpage load only. This number of bytes if multiplied by energy consumption per transferred byte. A metric that is estimated such that it includes the energy usage of entire system / internet. The estimated engery use is then multiplied by carbon intensity factor to get the carbon emissions attributed to the webpage load.
+It makes the complexity of estimating the emissions of all this segments accessible by focusing on the number of transferred bytes on webpage load only. This number of bytes is multiplied by energy consumption per transferred byte. A metric that is estimated such that it includes the energy usage of entire system / internet. The estimated engery use is then multiplied by carbon intensity factor to get the carbon emissions attributed to the webpage load.
 
 Of course, this approach sacrifices some accuracy for simplicity. For example the distance that the bytes travel through the network has no effect on the estimate but on the real emissions. Also, the amount of work that the data center has to do to process the requests, is not taken into account, just the size of the response that is finally sent. If you want to read up on the details of the swd model and the choices behind it, you can do so [here](https://sustainablewebdesign.org/calculating-digital-emissions/).
 

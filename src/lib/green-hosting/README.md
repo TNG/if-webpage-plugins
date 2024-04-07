@@ -23,8 +23,8 @@ tags:
 initialize:
   models:
     "green-hosting":
-      method: GreenHostingModel
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      method: GreenHosting
+      path: '@wr24-greenit/if-webpage-plugins'
 tree:
   children:
     child:
