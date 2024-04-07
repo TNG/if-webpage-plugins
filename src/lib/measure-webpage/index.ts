@@ -105,13 +105,6 @@ export const MeasureWebpage = (
           );
         }
 
-        console.log(
-          'LIGHTHOUSE AND PUPPETEER WEIGHT: ',
-          lighthouseResult?.lhr.audits['total-byte-weight'].numericValue,
-          ' ',
-          pageWeight
-        );
-
         return {
           ...input,
           'network/data/bytes': pageWeight,
