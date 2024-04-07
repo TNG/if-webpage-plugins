@@ -7,23 +7,19 @@ initialize:
   plugins:
     "timer-start":
       method: TimerStart
-      path: '@wr24-greenit/if-webpage-models'
+      path: '@wr24-greenit/if-webpage-plugins'
     "timer-stop":
       method: TimerStop
-      path: '@wr24-greenit/if-webpage-models'
+      path: '@wr24-greenit/if-webpage-plugins'
     "green-hosting":
       method: GreenHosting
-      path: '@wr24-greenit/if-webpage-models'
+      path: '@wr24-greenit/if-webpage-plugins'
     "measure-webpage":
       method: MeasureWebpage
-      path: '@wr24-greenit/if-webpage-models'
+      path: '@wr24-greenit/if-webpage-plugins'
     "co2js":
       method: Co2js
-      path: '@wr24-greenit/if-webpage-models'
-      global-config:
-        options:
-          firstVisitPercentage: 0.9
-          returnVisitPercentage: 0.1
+      path: '@wr24-greenit/if-webpage-plugins'
 tree:
   children:
     child:
@@ -37,10 +33,14 @@ tree:
         co2js:
           type: swd
         measure-webpage:
-          lighthouse: true
           scrollToBottom: true
+          mobileDevice: 'Pixel 2'
+#          lighthouse: true
       inputs:
         - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
           duration: 1 # will be replaced by the time it took to execute the measure-webpage plugin
           url: https://www.tngtech.com
           resets: [true] # tells the timer-stop method to replace timestamp and duration
+          options: # swd model options (co2js plugin)
+            firstVisitPercentage: 0.9
+            returnVisitPercentage: 0.1
