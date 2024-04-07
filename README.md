@@ -39,11 +39,28 @@ The Green Hosting Check plugin can check if a website is hosted green by queryin
 
 The Timer plugin is more generic. It can provide an accurate timestamp and duration for a measurement.
 
-## Usage
+For further info on the plugins, see their README files.
 
-For a usage example, see `example-manifests` directory. For further info on the plugins, see their README files.
+## Installation
+
+The plugin is not yet published to npm. You can install it by cloning this repository
+
+```
+git clone https://github.com/wr24-greenit/if-webpage-plugins.git
+```
+
+and running
+
+```
+npm install
+npm link
+```
+
+int the root directory.
 
 ## Example Usage (manifest file)
+
+Also see `example-manifests` directory.
 
 ```yaml
 name: measure-webpage-demo
