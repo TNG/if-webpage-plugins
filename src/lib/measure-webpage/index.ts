@@ -95,11 +95,7 @@ export const MeasureWebpage = (
           resourceTypeWeights,
           dataReloadRatio,
           lighthouseResult,
-        } = await measurePage(
-          validatedInput.url,
-          !mergedValidatedConfig?.options?.dataReloadRatio,
-          mergedValidatedConfig
-        );
+        } = await measurePage(validatedInput.url, mergedValidatedConfig);
 
         let reportPath;
         if (lighthouseResult) {
@@ -127,11 +123,8 @@ export const MeasureWebpage = (
     );
   };
 
-  const measurePage = async (
-    url: string,
-    computeReloadRatio: boolean,
-    config?: ConfigParams
-  ) => {
+  const measurePage = async (url: string, config?: ConfigParams) => {
+    const computeReloadRatio = !config?.options?.dataReloadRatio;
     const requestHandler = (interceptedRequest: HTTPRequest) => {
       const headers = Object.assign({}, interceptedRequest.headers(), {
         ...(config?.headers?.accept && {
