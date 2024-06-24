@@ -75,7 +75,7 @@ export const MeasureWebpage = (
    * Executes the measure webpage model for given inputs and config.
    *
    * See src/lib/measure-webpage/README.md for input parameters (inputs and config)
-   * and for return value.
+   * and return value.
    */
   const execute = async (
     inputs: PluginParams[],
