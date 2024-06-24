@@ -42,6 +42,7 @@ type Resource = ResourceBase & {transferSize: number};
 type Device = keyof typeof KnownDevices;
 
 // copied from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js#L21
+// because it is not exported there
 const NON_NETWORK_SCHEMES = [
   'blob', // @see https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
   'data', // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
@@ -71,7 +72,10 @@ export const MeasureWebpage = (
   };
 
   /**
-   * Executes the measure webpage model for given inputs.
+   * Executes the measure webpage model for given inputs and config.
+   *
+   * See src/lib/measure-webpage/README.md for input parameters (inputs and config)
+   * and for return value.
    */
   const execute = async (
     inputs: PluginParams[],
@@ -110,7 +114,7 @@ export const MeasureWebpage = (
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
           ...(lighthouseResult ? {'lighthouse-report': reportPath} : {}),
-          ...(input.options || dataReloadRatio
+          ...(input.options || dataReloadRatio // TODO not sure it is necessary to copy input.options here in every case instead of referencing them
             ? {
                 options: {
                   ...input.options,
@@ -242,6 +246,8 @@ export const MeasureWebpage = (
     try {
       await page.setCacheEnabled(cacheEnabled);
 
+      // the transfer size of a resource is not available from puppeteer's reponse object
+      // need to take the detour via a Chrome devtools protcol session to read it out
       const cdpIntermediateStore = new Map<string, {url: string}>();
       const cdpResponses = new Map<string, {encodedDataLength: number}>();
       const cdpSession = await page.createCDPSession();
@@ -415,9 +421,6 @@ export const MeasureWebpage = (
     return url.replace(/[/\\?%*:|"<>]/g, '_');
   };
 
-  /**
-   * Validates input parameters.
-   */
   const validateSingleInput = (input: PluginParams) => {
     const schema = z
       .object({
@@ -480,16 +483,10 @@ export const MeasureWebpage = (
       }
     );
 
-  /**
-   * Validates config parameters.
-   */
   const validateConfig = (config?: ConfigParams) => {
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   };
 
-  /**
-   * Validates Global config parameters.
-   */
   const validateGlobalConfig = () => {
     return validate<z.infer<typeof configSchema>>(
       configSchema,
