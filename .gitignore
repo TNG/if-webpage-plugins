@@ -1,7 +1,12 @@
-node_modules
-coverage
 .DS_Store
-build
 .idea
+.vscode
+
+build
+coverage
+node_modules
+output
 tsconfig.tsbuildinfo
+
 .env
+

@@ -1,0 +1,31 @@
+name: co2js-demo
+description: example manifest invoking CO2.JS plugin
+tags:
+initialize:
+  plugins:
+    co2js:
+      method: Co2js
+      path: '@grnsft/if-unofficial-plugins'
+  outputs:
+    - yaml
+tree:
+  children:
+    child:
+      pipeline:
+        - co2js
+      config:
+        co2js:
+          type: swd
+      inputs:
+        - timestamp: 2023-07-06T00:00
+          duration: 1
+          network/data/bytes: 1000000
+          green-web-host: true
+          options:
+            dataReloadRatio: 0.6
+            firstVisitPercentage: 0.9
+            returnVisitPercentage: 0.1
+            gridIntensity:
+              device: 560.98
+              dataCenter:
+                country: 'TWN'
