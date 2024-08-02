@@ -32,7 +32,7 @@ If parameters are provided twice, the node config is taking precedence.
 - `network/data/resources/bytes`: resources weights by category in bytes
 - `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
-- `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `ie` is executed
+- `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `if-run` is executed
   if `lighthouse` is set to true in the config
 
 # Further Info
