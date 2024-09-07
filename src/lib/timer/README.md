@@ -2,7 +2,7 @@
 
 > [!NOTE] > `TimerStart` and `TimerStop` are community plugins, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `TimerStart` and `TimerStop` plugins are used to measure the time between two points in a pipeline. `TimerStart` is used to start the timer, and `TimerStop` is used to stop the timer and calculate the duration. The `TimerStart` plugin has no input parameters, and the `TimerStop` plugin has a single input parameter, `resets`, which is an array of booleans indicating whether the time should be reset. A reset replaces the `timestamp` with the start time measured by `TimerStart` and the `duration` with the difference between the time measured by `TimerStop` and `TimerStart`.
+The `TimerStart` and `TimerStop` plugins are used to record the current timestamp and measure duration of plugin runs in a pipeline. `TimerStart` is used to start the timer, and `TimerStop` is used to stop the timer and calculate the duration. The `TimerStart` plugin has no input parameters. The `TimerStop` plugin has a single input parameter, `resets`, which is an array of booleans, one for every `TimerStart`, `TimerStop` pair (the first one for the first pair, the second one for the second and so on). If `true` the `timestamp` is replaced with the start time measured by the corresponding `TimerStart` step. Moreover, the `duration` is replaced by the difference between the times measured by `TimerStop` and `TimerStart`. If `false` the timestamp is not reset and the time difference between `TimerStart` and `TimerStop`calls is added to the `duration` value. `TimerStop` also removes the first reset value from the array. If none are left, it deletes the parameter entirely.
 
 # Parameters
 
@@ -26,13 +26,20 @@ The `TimerStart` and `TimerStop` plugins are used to measure the time between tw
 ### `TimerStop`
 
 If reset is true:
+
 - `timestamp`: set to the value of `timer/start`.
 - `duration`: Set to the difference: time of invocation of `TimerStop` - time of invocation of `TimerStart`.
 - deletes `timer/start` if present.
 
 If reset is false:
+
 - `duration`: Set to: `duration` + time of invocation of `TimerStop` - time of invocation of `TimerStart`.
 - deletes `timer/start` if present.
+
+## Error Handling
+
+- `TimerStart` throws an error if there is already an input value `time/start` because that indicates that `TimerStop` was not called before calling `TimerStart`, since `TimerStop` removes removes the `time/start` parameter.
+- `TimerStop` validates its inputs with the zod library and will throw errors if `time/start` is missing and the `resets` array does not contain at least one value.
 
 ## Manifest
 
