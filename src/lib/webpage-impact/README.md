@@ -1,12 +1,12 @@
-# WebpageImpact
+# Webpage Impact
 
 > [!NOTE] > `WebpageImpact` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
 The `WebpageImpact` plugin measures the weight of a webpage in bytes and the weights of the different loaded resources categorized by type. It can also approximate, with certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed. Its outputs can be fed to the [co2js plugin](https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js) to estimate carbon impacts.
 
-# Parameters
+## Parameters
 
-## Global Config and Config
+### Global Config and Config
 
 The following parameters are optional and can be set in the global config or in the config of the plugin node.
 
@@ -21,11 +21,11 @@ The following parameters are optional and can be set in the global config or in 
 
 If parameters are provided twice, the node config is taking precedence.
 
-## Inputs
+### Inputs
 
 - `url`: the URL of the webpage to measure (has to include the protocol type, like https://)
 
-## Returns
+### Returns
 
 - `network/data/bytes`: page weight in bytes
 - `network/data/resources/bytes`: resources weights by category in bytes
@@ -34,11 +34,11 @@ If parameters are provided twice, the node config is taking precedence.
 - `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `if-run` is executed
   if `lighthouse` is set to true in the config
 
-## Error Handling
+### Error Handling
 
 - `WebpageImpact`validates its inputs with the zod library and will throw errors if the requirements on inputs are not met.
 
-# Further Info
+## Further Info
 
 The plugin uses [Puppeteer](https://github.com/puppeteer/puppeteer) to measure the weight of a webpage and its resource categories in bytes, where weight refers to the transfer size of the resources.
 
@@ -68,7 +68,7 @@ initialize:
   output:
     - yaml
   plugins:
-    'webpage-impact'
+    'webpage-impact':
       method: WebpageImpact
       path: '@wr24-greenit/if-webpage-plugins'
 tree:
