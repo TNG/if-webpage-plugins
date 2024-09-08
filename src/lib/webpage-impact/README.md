@@ -1,9 +1,8 @@
-# MeasureWebpage
+# WebpageImpact
 
-> [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
+> [!NOTE] > `WebpageImpact` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the different resources categorized by type. It can also approximate, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed.
-
+The `WebpageImpact` plugin measures the weight of a webpage in bytes and the weights of the different loaded resources categorized by type. It can also approximate, with certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed. Its outputs can be fed to the [co2js plugin](https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js) to estimate carbon impacts.
 
 # Parameters
 
@@ -25,7 +24,6 @@ If parameters are provided twice, the node config is taking precedence.
 ## Inputs
 
 - `url`: the URL of the webpage to measure (has to include the protocol type, like https://)
-- `timestamp`: a timestamp for the observation
 
 ## Returns
 
@@ -35,6 +33,10 @@ If parameters are provided twice, the node config is taking precedence.
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
 - `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `if-run` is executed
   if `lighthouse` is set to true in the config
+
+## Error Handling
+
+- `WebpageImpact`validates its inputs with the zod library and will throw errors if the requirements on inputs are not met.
 
 # Further Info
 
@@ -56,27 +58,27 @@ Further remarks:
 
 ## Manifest
 
-The following is an example of how `MeasureWebpage` can be invoked using a manifest.
+The following is an example of how `WebpageImpact` can be invoked using a manifest.
 
 ```yaml
-name: measure-webpage-demo
-description: example manifest invoking the MeasureWebpage plugin
+name: webpage-impact-demo
+description: example manifest invoking the WebpageImpact plugin
 tags:
 initialize:
   output:
     - yaml
   plugins:
-    'measure-webpage'
-      method: MeasureWebpage
-      path: '@wr24-greenit/if-webpage-models-cjs'
+    'webpage-impact'
+      method: WebpageImpact
+      path: '@wr24-greenit/if-webpage-plugins'
 tree:
   children:
     child:
       pipeline:
-        - measure-webpage
+        - webpage-impact
       config:
       inputs:
-        - timestamp: 2024-02-25T00:00 # time when measurement occurred
+        - timestamp: 2024-02-25T00:00
           duration: 1
           url: 'https://tngtech.com'
 ```

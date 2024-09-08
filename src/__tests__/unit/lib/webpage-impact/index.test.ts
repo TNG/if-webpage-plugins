@@ -1,17 +1,17 @@
 import http from 'http';
 import express, {Express} from 'express';
-import {MeasureWebpage} from '../../../../lib';
+import {WebpageImpact} from '../../../../lib';
 
-describe('lib/measure-webpage', () => {
-  describe('MeasureWebpage:', () => {
-    describe('init measure-webpage: ', () => {
-      it('initializes MeasureWebpage with required properties', () => {
-        const measureWebpage = MeasureWebpage();
+describe('lib/webpage-impact', () => {
+  describe('WebpageImpact:', () => {
+    describe('init: ', () => {
+      it('initializes WebpageImpact with required properties', () => {
+        const webpageImpact = WebpageImpact();
 
         expect.assertions(2);
 
-        expect(measureWebpage).toHaveProperty('metadata');
-        expect(measureWebpage).toHaveProperty('execute');
+        expect(webpageImpact).toHaveProperty('metadata');
+        expect(webpageImpact).toHaveProperty('execute');
       });
     });
     describe('execute: ', () => {
@@ -85,7 +85,7 @@ describe('lib/measure-webpage', () => {
       // from the plugin, so I am fairly confident that the values are plausible with a margin of error.
       // I also compared against other online tools, like ecograder.com, which returned similar values in my tests
       it('computes transfer sizes that seem plausible for the mock page', async () => {
-        const measureWebpage = MeasureWebpage();
+        const webpageImpact = WebpageImpact();
         const inputs = [
           {
             timestamp: '2020-01-01T00:00:00Z',
@@ -95,7 +95,7 @@ describe('lib/measure-webpage', () => {
         ];
 
         const {timestamp, duration, url, ...data} = (
-          await measureWebpage.execute(inputs)
+          await webpageImpact.execute(inputs)
         )[0];
 
         expect(timestamp).toEqual('2020-01-01T00:00:00Z');

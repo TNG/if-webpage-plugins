@@ -23,7 +23,7 @@ import {buildErrorMessage} from '../../util/helpers';
 import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types/common';
 
-type MeasurePageOptions = {
+type WebpageImpactOptions = {
   reload: boolean;
   cacheEnabled: boolean;
   scrollToBottom?: boolean;
@@ -62,19 +62,17 @@ const ALLOWED_ENCODINGS = [
   '*',
 ] as const;
 
-export const MeasureWebpage = (
-  globalConfig?: ConfigParams
-): PluginInterface => {
-  const errorBuilder = buildErrorMessage(MeasureWebpage.name);
+export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
+  const errorBuilder = buildErrorMessage(WebpageImpact.name);
   const metadata = {
     kind: 'execute',
     version: '0.1.0',
   };
 
   /**
-   * Executes the measure webpage model for given inputs and config.
+   * Executes the webpage impact plugin for given inputs and config.
    *
-   * See src/lib/measure-webpage/README.md for input parameters (inputs and config)
+   * See src/lib/webpage-impact/README.md for input parameters (inputs and config)
    * and return value.
    */
   const execute = async (
@@ -95,7 +93,10 @@ export const MeasureWebpage = (
           resourceTypeWeights,
           dataReloadRatio,
           lighthouseResult,
-        } = await measurePage(validatedInput.url, mergedValidatedConfig);
+        } = await measurePageImpactMetrics(
+          validatedInput.url,
+          mergedValidatedConfig
+        );
 
         let reportPath;
         if (lighthouseResult) {
@@ -123,7 +124,10 @@ export const MeasureWebpage = (
     );
   };
 
-  const measurePage = async (url: string, config?: ConfigParams) => {
+  const measurePageImpactMetrics = async (
+    url: string,
+    config?: ConfigParams
+  ) => {
     const computeReloadRatio = !config?.options?.dataReloadRatio;
     const requestHandler = (interceptedRequest: HTTPRequest) => {
       const headers = Object.assign({}, interceptedRequest.headers(), {
@@ -202,7 +206,7 @@ export const MeasureWebpage = (
     } catch (error) {
       throw new Error(
         errorBuilder({
-          message: `Error during measurement of webpage: ${error}`,
+          message: `Error during measurement of webpage impact metrics: ${error}`,
         })
       );
     }
@@ -211,7 +215,7 @@ export const MeasureWebpage = (
   const loadPageResources = async (
     page: Page,
     url: string,
-    {reload, cacheEnabled, scrollToBottom}: MeasurePageOptions
+    {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions
   ) => {
     const pageResources: ResourceBase[] = [];
 
@@ -230,9 +234,7 @@ export const MeasureWebpage = (
         };
         pageResources.push(resource);
       } catch (error) {
-        console.error(
-          `MeasureWebpage: Error accessing response body: ${error}`
-        );
+        console.error(`WebpageImpact: Error accessing response body: ${error}`);
       }
     };
 
