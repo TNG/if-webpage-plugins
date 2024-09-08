@@ -24,7 +24,7 @@ The following is an example of how `GreenHosting` can be invoked using a manifes
 
 ```yaml
 name: green-hosting-demo
-description: example manifest invoking green-hosting method
+description: example manifest invoking green-hosting plugin
 tags:
 initialize:
   outputs:

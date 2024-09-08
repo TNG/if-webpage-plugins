@@ -47,7 +47,7 @@ The following is an example of how `TimerStart` and `TimerStop` can be invoked u
 
 ```yaml
 name: timer-demo
-description: example manifest invoking timer methods
+description: example manifest invoking timer plugins
 tags:
 initialize:
   outputs:
@@ -59,62 +59,34 @@ initialize:
     timer-stop:
       method: TimerStop
       path: '@grnsft/if-unofficial-plugins'
-    exec-command:
-      method: ShellExecCommand
-      path: '@grnsft/if-unofficial-plugins'
 tree:
   children:
     child:
       pipeline:
         - timer-start
-        - exec-command
         - timer-stop
-      config:
-        exec-command:
-          command: sleep 10
       inputs:
         - timestamp: 2024-02-25T00:00 # some placeholder timestamp that will be substituted by timer-start
           duration: 1 # if reset = true this will be overwritten, otherwise it will be added to
           resets: [true]
 ```
 
-This will produce an output like this:
+The output will contain lines similar to:
 
 ```yaml
-name: timer-demo
-description: example manifest invoking timer methods
-tags: null
-initialize:
-  plugins:
-    timer-start:
-      path: '@grnsft/if-unofficial-plugins'
-      method: TimerStart
-    timer-stop:
-      path: '@grnsft/if-unofficial-plugins'
-      method: TimerStop
-    exec-command:
-      path: '@grnsft/if-unofficial-plugins'
-      method: ExecShellCommand
-  outputs:
-    - yaml
+...
 tree:
   children:
     child:
       pipeline:
         - timer-start
-        - exec-command
         - timer-stop
-      config:
-        exec-command:
-          command: sleep 10
       inputs:
         - timestamp: 2024-02-25T00:00
           duration: 1
           resets:
             - true
       outputs:
-        - timestamp: '2024-03-16T00:06:54.994Z'
-          duration: 10.02
-          resets: []
-          stdout: ''
+        - timestamp: '2024-09-08T00:14:53.939Z'
+          duration: 0.002
 ```

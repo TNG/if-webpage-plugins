@@ -2,7 +2,8 @@
 
 > [!NOTE] > `MeasureWebpage` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the resources categorized by type. It can also approximate, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with Puppeteer. It can also generate a Lighthouse report.
+The `MeasureWebpage` plugin measures the weight of a webpage in bytes and the weight of the different resources categorized by type. It can also approximate, within certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed.
+
 
 # Parameters
 
@@ -37,11 +38,11 @@ If parameters are provided twice, the node config is taking precedence.
 
 # Further Info
 
-The plugin uses Puppeteer to measure the weight of a webpage and its resource categories in bytes, where weight refers to the transfer size of the resources.
+The plugin uses [Puppeteer](https://github.com/puppeteer/puppeteer) to measure the weight of a webpage and its resource categories in bytes, where weight refers to the transfer size of the resources.
 
 The page weight (the number of bytes transferred to load the page) can be feed into the co2js plugin to estimate the carbon emissions associated with the page load.
 
-Several config options are provided to modify the loading of the page, e.g. emulating a mobile device and network conditions. By scrolling to the bottom of the page one can also take into account lazy loaded resources. Custome accept and accept-encoding request headers can also be provided.
+Several config options are provided to modify the loading of the page, e.g. emulating a mobile device and network conditions. By scrolling to the bottom of the page one can also take into account lazy loaded resources. Custom accept and accept-encoding request headers can also be provided.
 
 The plugin can also approximate the `dataReloadRatio` that is needed for carbon emissions estimation with the Sustainable Webdesign Model (provided by the co2js plugin). To approximate the `dataReloadRatio` the page weight is calculated for a first visit and a return visit. The difference `weight of initial load - weight of reload` plus the weight of the resources that were loaded from browser cache on reload, is assumed to be the weight of resources that did not need reloading.
 This assumption can be off. For example if there is a lot of dynamic content on the page, that is requested only under certain conditions or at specific times. Also, cached resources provided by service workers are not taken into account. Possibly, content personalization can also distort the measurement if initial load and reload do not get comparable content.
@@ -49,6 +50,7 @@ This assumption can be off. For example if there is a lot of dynamic content on 
 Additionally, the plugin can also generate a lighthouse report to provide additional insights into the performance of the webpage.
 
 Further remarks:
+
 - Cookies are not supported.
 - Device emulation only sets screen size and user agent. It does not throttle network speed or CPU to match device capabilities.
 
@@ -58,13 +60,15 @@ The following is an example of how `MeasureWebpage` can be invoked using a manif
 
 ```yaml
 name: measure-webpage-demo
-description: example manifest invoking the MeasureWebpage method
+description: example manifest invoking the MeasureWebpage plugin
 tags:
 initialize:
-  models:
-    - name: measure-webpage
+  output:
+    - yaml
+  plugins:
+    'measure-webpage'
       method: MeasureWebpage
-      path: '@alexzurbonsen/if-webpage-models-cjs'
+      path: '@wr24-greenit/if-webpage-models-cjs'
 tree:
   children:
     child:
@@ -74,7 +78,5 @@ tree:
       inputs:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
-          url: https://github.com/puppeteer/puppeteer
+          url: 'https://tngtech.com'
 ```
-
-
