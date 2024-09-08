@@ -2,7 +2,7 @@ import {exec} from 'child_process';
 import {z} from 'zod';
 
 import {PluginInterface} from '../../interfaces';
-import {ConfigParams, PluginParams} from '../../types';
+import {ConfigParams, PluginParams} from '../../types/common';
 
 import {validate} from '../../util/validations';
 import * as util from 'util';
