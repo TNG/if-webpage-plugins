@@ -1,4 +1,4 @@
-# ExecShellCommand
+# Exec Shell Command
 
 > [!NOTE] > `ShellExecCommand` is a community plugin and not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
@@ -48,7 +48,7 @@ tree:
           duration: 1
 ```
 
-This will produce an output like this:
+The produced `outputs` look like in this example:
 
 ```yaml
 name: exec-shell-command-demo
@@ -60,7 +60,7 @@ initialize:
   plugins:
     exec-command:
       method: ShellExecCommand
-      path: '@grnsft/if-unofficial-plugins'
+      path: '@wr24-greenit/if-webpage-plugins'
 tree:
   children:
     child:

@@ -55,23 +55,30 @@ initialize:
   plugins:
     timer-start:
       method: TimerStart
-      path: '@grnsft/if-unofficial-plugins'
+      path: '@wr24-greenit/if-webpage-plugin'
     timer-stop:
       method: TimerStop
-      path: '@grnsft/if-unofficial-plugins'
+      path: '@wr24-greenit/if-webpage-plugin'
+    exec-command:
+      method: ShellExecCommand
+      path: '@wr24-greenit/if-webpage-plugins'
 tree:
   children:
     child:
       pipeline:
         - timer-start
+        - exec-command
         - timer-stop
+      config:
+        exec-command:
+          command: 'sleep 10'
       inputs:
         - timestamp: 2024-02-25T00:00 # some placeholder timestamp that will be substituted by timer-start
           duration: 1 # if reset = true this will be overwritten, otherwise it will be added to
           resets: [true]
 ```
 
-The output will contain lines similar to:
+The `outputs` look like in this example:
 
 ```yaml
 ...
@@ -80,13 +87,18 @@ tree:
     child:
       pipeline:
         - timer-start
+        - exec-command
         - timer-stop
+      config:
+        exec-command:
+          command: sleep 1
       inputs:
         - timestamp: 2024-02-25T00:00
           duration: 1
           resets:
             - true
       outputs:
-        - timestamp: '2024-09-08T00:14:53.939Z'
-          duration: 0.002
+        - timestamp: '2024-09-08T19:44:29.657Z'
+          duration: 1.017
+          stdout: ''
 ```
