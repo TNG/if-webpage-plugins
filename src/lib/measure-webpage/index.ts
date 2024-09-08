@@ -419,7 +419,6 @@ export const MeasureWebpage = (
       .object({
         url: z.string(),
         'timer/start': z.string().datetime().optional(),
-        timestamp: z.string().datetime(),
       })
       .refine(allDefined, {message: '`url` must be provided.'});
 
