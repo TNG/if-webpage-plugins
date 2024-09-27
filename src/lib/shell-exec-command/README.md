@@ -34,7 +34,7 @@ initialize:
   plugins:
     exec-command:
       method: ShellExecCommand
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
 tree:
   children:
     child:
@@ -60,7 +60,7 @@ initialize:
   plugins:
     exec-command:
       method: ShellExecCommand
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
 tree:
   children:
     child:

@@ -55,13 +55,13 @@ initialize:
   plugins:
     timer-start:
       method: TimerStart
-      path: '@wr24-greenit/if-webpage-plugin'
+      path: '@TNG/if-webpage-plugin'
     timer-stop:
       method: TimerStop
-      path: '@wr24-greenit/if-webpage-plugin'
+      path: '@TNG/if-webpage-plugin'
     exec-command:
       method: ShellExecCommand
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
 tree:
   children:
     child:

@@ -70,7 +70,7 @@ initialize:
   plugins:
     'webpage-impact':
       method: WebpageImpact
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
 tree:
   children:
     child:

@@ -45,13 +45,13 @@ For further info on the plugins, see their README files.
 
 The plugin is not yet published to npm. You can install it by cloning this repository
 
-```
-git clone https://github.com/wr24-greenit/if-webpage-plugins.git
+```bash
+git clone https://github.com/TNG/if-webpage-plugins.git
 ```
 
 and running
 
-```
+```bash
 npm install
 npm link
 ```
@@ -72,19 +72,19 @@ initialize:
   plugins:
     "timer-start":
       method: TimerStart
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
     "timer-stop":
       method: TimerStop
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
     "green-hosting":
       method: GreenHosting
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
     "measure-webpage":
       method: MeasureWebpage
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
     "co2js":
       method: Co2js
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
       global-config:
         options:
           firstVisitPercentage: 0.9

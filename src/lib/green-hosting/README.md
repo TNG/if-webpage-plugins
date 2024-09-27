@@ -32,7 +32,7 @@ initialize:
   plugins:
     'green-hosting':
       method: GreenHosting
-      path: '@wr24-greenit/if-webpage-plugins'
+      path: '@TNG/if-webpage-plugins'
 tree:
   children:
     child:
