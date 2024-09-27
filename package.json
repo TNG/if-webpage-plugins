@@ -1,13 +1,13 @@
 {
-  "name": "@wr24-greenit/if-webpage-plugins",
-  "description": "Impact Framework - Models for Measuring Webpages (CommonJS)",
+  "name": "@TNG/if-webpage-plugins",
+  "description": "Impact Framework - Plugins for estimating CO2e Impact of Webpages (CommonJS)",
   "version": "v0.0.1",
   "author": {
     "name": "A. zur Bonsen, TNG Technology Consulting GmbH",
     "email": "alexander.zur.bonsen@tngtech.com"
   },
   "bugs": {
-    "url": "https://github.com/wr24-greenit/if-webpage-plugins/issues"
+    "url": "https://github.com/TNG/if-webpage-plugins/issues"
   },
   "dependencies": {
     "@tgwf/co2": "^0.14.3",
@@ -49,13 +49,13 @@
   "files": [
     "build"
   ],
-  "homepage": "https://github.com/wr24-greenit/if-webpage-plugins",
+  "homepage": "https://github.com/TNG/if-webpage-plugins",
   "keywords": [
     "green software",
     "green software foundation",
     "if",
-    "if-models",
-    "models",
+    "if-plugins",
+    "plugins",
     "unofficial"
   ],
   "license": "MIT",
@@ -64,7 +64,7 @@
     "access": "public"
   },
   "repository": {
-    "url": "https://github.com/wr24-greenit/if-webpage-plugins.git"
+    "url": "https://github.com/TNG/if-webpage-plugins.git"
   },
   "scripts": {
     "build": "rm -rf build && tsc --project tsconfig.json",
