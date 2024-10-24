@@ -1,5 +1,5 @@
 {
-  "name": "@TNG/if-webpage-plugins",
+  "name": "@tngtech/if-webpage-plugins",
   "description": "Impact Framework - Plugins for estimating CO2e Impact of Webpages (CommonJS)",
   "version": "v0.0.1",
   "author": {
@@ -32,7 +32,7 @@
     "express": "^4.19.2",
     "fixpack": "4.0.0",
     "gts": "^5.0.0",
-    "husky": "^8.0.0",
+    "husky": "^8.0.3",
     "jest": "^29.6.1",
     "jest-mock-axios": "^4.7.2",
     "lint-staged": "^15.2.2",

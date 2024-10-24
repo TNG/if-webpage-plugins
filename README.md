@@ -56,7 +56,7 @@ npm install
 npm link
 ```
 
-int the root directory.
+int the root directory. (If husky fails with a permission error, executing `chmod +x ./node_modules/husky/lib/bin.js`, also from the root directory, will probably help.)
 
 ## Example Usage (manifest file)
 
