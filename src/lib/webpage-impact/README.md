@@ -70,7 +70,7 @@ initialize:
   plugins:
     'webpage-impact':
       method: WebpageImpact
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
 tree:
   children:
     child:

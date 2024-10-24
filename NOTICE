@@ -1,5 +1,5 @@
 This Software contains code from [Lighthouse](https://github.com/GoogleChrome/lighthouse)
-in `src/lib/measure-webpage/index.ts`. The parts marked as originating from Lighthouse
+in `src/lib/webpage-impact/index.ts`. The parts marked as originating from Lighthouse
 are distributed under Apache 2.0 License and with
 
 Copyright 2016 Google LLC

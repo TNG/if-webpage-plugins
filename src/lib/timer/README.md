@@ -55,13 +55,13 @@ initialize:
   plugins:
     timer-start:
       method: TimerStart
-      path: '@TNG/if-webpage-plugin'
+      path: '@tngtech/if-webpage-plugins'
     timer-stop:
       method: TimerStop
-      path: '@TNG/if-webpage-plugin'
+      path: '@tngtech/if-webpage-plugins'
     exec-command:
       method: ShellExecCommand
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
 tree:
   children:
     child:
