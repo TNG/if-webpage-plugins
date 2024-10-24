@@ -60,7 +60,7 @@ initialize:
   plugins:
     exec-command:
       method: ShellExecCommand
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
 tree:
   children:
     child:

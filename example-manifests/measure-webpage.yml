@@ -1,4 +1,4 @@
-name: measure-webpage-demo
+name: webpage-impact-demo
 description: example manifest for estimating carbon emissions of a webpage
 tags:
 initialize:
@@ -7,38 +7,38 @@ initialize:
   plugins:
     'timer-start':
       method: TimerStart
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
     'timer-stop':
       method: TimerStop
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
     'green-hosting':
       method: GreenHosting
-      path: '@TNG/if-webpage-plugins'
-    'measure-webpage':
-      method: MeasureWebpage
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
+    'webpage-impact':
+      method: WebpageImpact
+      path: '@tngtech/if-webpage-plugins'
     'co2js':
       method: Co2js
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
 tree:
   children:
     child:
       pipeline:
         - timer-start
-        - measure-webpage
+        - webpage-impact
         - timer-stop
         - green-hosting
         - co2js
       config:
         co2js:
           type: swd
-        measure-webpage:
+        webpage-impact:
           scrollToBottom: false
           # mobileDevice: 'Pixel 2'
           # lighthouse: true
       inputs:
         - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
-          duration: 1 # will be replaced by the time it took to execute the measure-webpage plugin
+          duration: 1 # will be replaced by the time it took to execute the webpage-impact plugin
           url: https://www.thegreenwebfoundation.org/
           resets: [true] # tells the timer-stop method to replace timestamp and duration
           options: # swd model options (co2js plugin)

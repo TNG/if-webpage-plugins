@@ -32,7 +32,7 @@ initialize:
   plugins:
     'green-hosting':
       method: GreenHosting
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
 tree:
   children:
     child:
@@ -42,5 +42,5 @@ tree:
       inputs:
         - timestamp: 2024-02-25T00:00 # time when measurement occurred
           duration: 1
-          url: www.thegreenwebfoundation.org```
+          url: www.thegreenwebfoundation.org
 ```
