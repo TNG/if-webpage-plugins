@@ -6,6 +6,7 @@ import {allDefined, validate} from '../../util/validations';
 
 import {PluginFactory} from '@grnsft/if-core/interfaces';
 import {PluginParams, ConfigParams} from '@grnsft/if-core/types';
+import {addCurrentTimestampAndDurationIfMissing} from '../../util/helpers';
 
 export const GreenHosting = PluginFactory({
   metadata: {
@@ -48,14 +49,7 @@ export const GreenHosting = PluginFactory({
             `GreenHosting: Could not extract domain from url ${input.url}`
           );
         }
-        // generate timestamp and duration if they do not exist in input
-        if (!('timestamp' in input) && !('duration' in input)) {
-          input = {
-            timestamp: new Date().toISOString(),
-            duration: 0, // We are getting information from an API. No need to know how long we waited.
-            ...input,
-          };
-        }
+        input = addCurrentTimestampAndDurationIfMissing(input, 0); // We are making a web request. No need to know how long we waited.
         return {
           ...input,
           'green-web-host': domain ? await hosting.check(domain) : undefined,
