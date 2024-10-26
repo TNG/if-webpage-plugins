@@ -59,7 +59,7 @@ in the root directory. (If husky fails with a permission error, executing `chmod
 
 Also see `example-manifests` directory.
 
-Note: This manifest was tested with v0.7.1 of the Impact Framework (IF). Since its interface is still subject to change, it cannot be guaranteed that this manifest and the plugins will work with future versions of IF.
+Note: This manifest was tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that this manifest and the plugins will work with future versions of IF.
 
 ```yaml
 name: webpage-impact-demo

@@ -4,6 +4,8 @@
 
 The `GreenHosting` plugin checks whether the domain of the provided url is hosted with green energy as reported by the Green Web Foundation's [green web check database](https://www.thegreenwebfoundation.org/green-web-check/).
 
+**Note**: The plugin and the example manifest below were tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that plugin and manifest will work with future versions of IF.
+
 # Parameters
 
 ## observations

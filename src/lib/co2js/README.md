@@ -2,6 +2,8 @@
 
 > [!NOTE] > `CO2.JS` ([thegreenwebfoundation/co2.js](https://github.com/thegreenwebfoundation/co2.js)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
+**Note**: The plugin and the example manifest below were tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that plugin and manifest will work with future versions of IF.
+
 # Parameters
 
 ## Config

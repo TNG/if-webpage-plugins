@@ -4,6 +4,8 @@
 
 The `WebpageImpact` plugin measures the weight of a webpage in bytes and the weights of the different loaded resources categorized by type. It can also approximate, with certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed. Its outputs can be fed to the [co2js plugin](https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js) to estimate carbon impacts.
 
+**Note**: The plugin and the example manifest below were tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that plugin and manifest will work with future versions of IF.
+
 ## Parameters
 
 `WebpageImpact` is intended to be used in the `observe` phase of the manifest computation. Thus, the `url` for measurement is passed as a config option.
