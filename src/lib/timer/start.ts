@@ -1,18 +1,25 @@
-import {PluginInterface} from '../../interfaces';
 import {buildErrorMessage, ERRORS} from '../../util/errors';
 import {STRINGS} from '../../config';
-import {PluginParams} from '../../types/common';
+import {PluginFactory} from '@grnsft/if-core/interfaces';
+import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 
 const {InputValidationError} = ERRORS;
 const {TIMER} = STRINGS;
 
-export const TimerStart = (): PluginInterface => {
-  const errorBuilder = buildErrorMessage(TimerStart.name);
-  const metadata = {
-    kind: 'execute',
-  };
+export const TimerStart = PluginFactory({
+  metadata: {
+    outputs: {
+      'timer/start': {
+        description:
+          'Timestamp, usually set by a prior invocation of `TimerStart`. (But that is no requirement.)',
+        unit: 'none',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+    },
+  },
+  implementation: async (inputs: PluginParams[], _config: ConfigParams) => {
+    const errorBuilder = buildErrorMessage(TimerStart.name);
 
-  const execute = async (inputs: PluginParams[]) => {
     return inputs.map(input => {
       if (input['timer/start']) {
         throw new InputValidationError(
@@ -27,10 +34,5 @@ export const TimerStart = (): PluginInterface => {
         'timer/start': startTime,
       };
     });
-  };
-
-  return {
-    metadata,
-    execute,
-  };
-};
+  },
+});
