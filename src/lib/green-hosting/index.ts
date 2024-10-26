@@ -21,7 +21,7 @@ export const GreenHosting = PluginFactory({
     outputs: {
       'green-web-host': {
         description:
-          'True, false or undefined, indicating that the domain is or is not hosted green. If the return value is undefined, no domain could be extracted from the provided url.',
+          'True, false or undefined, indicating that the domain is or is not hosted green. If undefined, no valid domain could be extracted from the provided url.',
         unit: 'none',
         'aggregation-method': {time: 'none', component: 'none'},
       },
