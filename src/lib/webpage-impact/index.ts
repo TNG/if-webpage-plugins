@@ -17,11 +17,15 @@ import puppeteer, {
 } from 'puppeteer';
 import {z} from 'zod';
 
+import {STRINGS} from '../../config';
 import {allDefined, validate} from '../../util/validations';
 
-import {PluginInterface} from '../../interfaces';
-import {ConfigParams, PluginParams} from '../../types/common';
-import {buildErrorMessage} from '../../util/errors';
+import {ERRORS} from '@grnsft/if-core/utils';
+import {PluginFactory} from '@grnsft/if-core/interfaces';
+import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
+
+const {ConfigError} = ERRORS;
+const {MISSING_CONFIG} = STRINGS;
 
 type WebpageImpactOptions = {
   reload: boolean;
@@ -40,6 +44,8 @@ type ResourceBase = {
 type Resource = ResourceBase & {transferSize: number};
 
 type Device = keyof typeof KnownDevices;
+
+const LOGGER_PREFIX = 'WebpageImpact';
 
 // copied from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js#L21
 // because it is not exported there
@@ -62,56 +68,81 @@ const ALLOWED_ENCODINGS = [
   '*',
 ] as const;
 
-export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
-  const errorBuilder = buildErrorMessage(WebpageImpact.name);
-  const metadata = {
-    kind: 'execute',
-    version: '0.1.0',
-  };
+export const WebpageImpact = PluginFactory({
+  metadata: {
+    outputs: {
+      'network/data/bytes': {
+        description:
+          'Weight of the webpage measured in number of bytes transferred for loading the page.',
+        unit: 'bytes',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+      'network/data/resources/bytes': {
+        description:
+          'Weights of resources categories (e.g. script, stylesheet, image) measured in number of bytes transferred for loading the page.',
+        unit: 'bytes',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+      dataReloadRatio: {
+        description:
+          "Percentage of data that is downloaded by returning visitors (can be used as input for CO2.JS plugin). If options.dataReloadRatio is provided as input alreadz, the plugin won't calculate it.",
+        unit: 'none',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+      timestamp: {
+        description: 'Time of the observation / webpage load.',
+        unit: 'ISO date string',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+      duration: {
+        description: 'Time that the measurement took',
+        unit: 'seconds',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+    },
+  },
+  configValidation: (
+    config: ConfigParams,
+    _input: PluginParams | undefined
+  ) => {
+    const {validateConfig} = WebpageImpactUtils();
 
-  /**
-   * Executes the webpage impact plugin for given inputs and config.
-   *
-   * See src/lib/webpage-impact/README.md for input parameters (inputs and config)
-   * and return value.
-   */
-  const execute = async (
-    inputs: PluginParams[],
-    config?: ConfigParams
-  ): Promise<PluginParams[]> => {
-    const mergedValidatedConfig = Object.assign(
-      {},
-      validateGlobalConfig(),
-      validateConfig(config)
-    );
+    return validateConfig(config);
+  },
+  implementation: async (inputs: PluginParams[], config: ConfigParams) => {
+    const {measurePageImpactMetrics, writeReportToFile} = WebpageImpactUtils();
+
+    if (inputs.length === 0) {
+      inputs.push({});
+    }
 
     return await Promise.all(
       inputs.map(async input => {
-        const validatedInput = Object.assign(input, validateSingleInput(input));
+        const startTime = Date.now();
+
         const {
           pageWeight,
           resourceTypeWeights,
           dataReloadRatio,
           lighthouseResult,
-        } = await measurePageImpactMetrics(
-          validatedInput.url,
-          mergedValidatedConfig
-        );
+        } = await measurePageImpactMetrics(config.url, config);
+
+        const durationInSeconds = (Date.now() - startTime) / 1000;
 
         let reportPath;
         if (lighthouseResult) {
-          reportPath = writeReportToFile(
-            lighthouseResult.report,
-            validatedInput
-          );
+          reportPath = writeReportToFile(lighthouseResult.report, input);
         }
 
         return {
           ...input,
+          timestamp: new Date(startTime).toISOString(),
+          duration: durationInSeconds,
+          url: config.url,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
           ...(lighthouseResult ? {'lighthouse-report': reportPath} : {}),
-          ...(input.options || dataReloadRatio // TODO not sure it is necessary to copy input.options here in every case instead of referencing them
+          ...(config.options || dataReloadRatio // TODO not sure it is necessary to copy input.options here in every case instead of referencing them
             ? {
                 options: {
                   ...input.options,
@@ -122,8 +153,10 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
         };
       })
     );
-  };
+  },
+});
 
+const WebpageImpactUtils = () => {
   const measurePageImpactMetrics = async (
     url: string,
     config?: ConfigParams
@@ -150,7 +183,7 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
 
       try {
         const page = await browser.newPage();
-        if (config?.timeout) {
+        if (config?.timeout && config?.timeout >= 0) {
           page.setDefaultNavigationTimeout(config.timeout);
         }
         if (config?.mobileDevice) {
@@ -205,9 +238,7 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
       }
     } catch (error) {
       throw new Error(
-        errorBuilder({
-          message: `Error during measurement of webpage impact metrics: ${error}`,
-        })
+        `${LOGGER_PREFIX}: Error during measurement of webpage impact metrics: ${error}`
       );
     }
   };
@@ -224,7 +255,6 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
         if (isFromNonNetworkRequest(response) || hasNoResponseBody(response)) {
           return;
         }
-
         const resource = {
           url: response.url(),
           resourceSize: (await response.buffer()).length,
@@ -234,7 +264,9 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
         };
         pageResources.push(resource);
       } catch (error) {
-        console.error(`WebpageImpact: Error accessing response body: ${error}`);
+        console.debug(
+          `${LOGGER_PREFIX}: Couldn't load ${response.url()}, status: ${response.status()}: ${error}`
+        );
       }
     };
 
@@ -278,9 +310,7 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
       return mergeCdpResponsesIntoResources(pageResources, cdpResponses);
     } catch (error) {
       throw new Error(
-        errorBuilder({
-          message: `Error during measurement of webpage: ${error}`,
-        })
+        `${LOGGER_PREFIX}: Error while loading webpage: ${error}`
       );
     }
   };
@@ -293,9 +323,9 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
 
   const hasNoResponseBody = (response: HTTPResponse) => {
     return (
-      response.status() === 204 &&
-      response.status() === 304 &&
-      response.request().method() !== 'OPTIONS'
+      response.status() === 204 || // no content
+      (response.status() >= 300 && response.status() < 400) || // redirect
+      response.request().method() === 'OPTIONS' // request for options https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
     );
   };
 
@@ -306,7 +336,9 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
     return pageResources.map(resource => {
       const cdpResponse = cdpResponses.get(resource.url);
       if (!cdpResponse) {
-        console.warn('No encoded data length for resource: ', resource.url);
+        console.debug(
+          `${LOGGER_PREFIX}: No encoded data length for resource: ${resource.url}`
+        );
       }
       return cdpResponse
         ? ({
@@ -366,7 +398,9 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
         0
       );
       if (initialCacheWeight > 0) {
-        console.warn('Initial page load contained resources from cache.');
+        console.warn(
+          `${LOGGER_PREFIX}: Initial page load contained resources from cache.`
+        );
       }
       const reloadPageWeight = reloadResources.reduce(
         (acc, resource) => acc + resource.transferSize,
@@ -381,8 +415,10 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
       );
       const assumedCacheWeight = assumeFromCache + browserCache;
 
-      dataReloadRatio =
-        (initialPageWeight - assumedCacheWeight) / initialPageWeight;
+      dataReloadRatio = roundToDecimalPlaces(
+        (initialPageWeight - assumedCacheWeight) / initialPageWeight,
+        2
+      );
     }
 
     return {
@@ -390,6 +426,11 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
       resourceTypeWeights,
       dataReloadRatio,
     };
+  };
+
+  const roundToDecimalPlaces = (num: number, decimalPlaces: number) => {
+    const factor = Math.pow(10, decimalPlaces);
+    return Math.round(num * factor) / factor;
   };
 
   const writeReportToFile = (
@@ -416,19 +457,12 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
     return url.replace(/[/\\?%*:|"<>]/g, '_');
   };
 
-  const validateSingleInput = (input: PluginParams) => {
-    const schema = z
-      .object({
-        url: z.string(),
-        'timer/start': z.string().datetime().optional(),
-      })
-      .refine(allDefined, {message: '`url` must be provided.'});
+  const validateConfig = (config: ConfigParams) => {
+    if (!config || !Object.keys(config)?.length) {
+      throw new ConfigError(MISSING_CONFIG);
+    }
 
-    return validate<z.infer<typeof schema>>(schema, input);
-  };
-
-  const configSchema = z
-    .object({
+    const optionalConfigs = z.object({
       timeout: z.number().gte(0).optional(),
       mobileDevice: z.string().optional(),
       emulateNetworkConditions: z.string().optional(),
@@ -448,48 +482,47 @@ export const WebpageImpact = (globalConfig?: ConfigParams): PluginInterface => {
         })
         .optional(),
       lighthouse: z.boolean().optional(),
-    })
-    .optional()
-    .refine(
-      data => {
-        return data?.mobileDevice
-          ? !!KnownDevices[data.mobileDevice as Device]
-          : true;
-      },
-      {
-        message: `Mobile device must be one of: ${Object.keys(
-          KnownDevices
-        ).join(', ')}.`,
-      }
-    )
-    .refine(
-      data => {
-        return data?.emulateNetworkConditions
-          ? !!PredefinedNetworkConditions[
-              data.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
-            ]
-          : true;
-      },
-      {
-        message: `Network condition must be one of: ${Object.keys(
-          PredefinedNetworkConditions
-        ).join(', ')}.`,
-      }
-    );
+    });
 
-  const validateConfig = (config?: ConfigParams) => {
+    const configSchema = z
+      .object({
+        url: z.string(),
+      })
+      .merge(optionalConfigs)
+      .refine(allDefined, {message: '`url` must be provided.'})
+      .refine(
+        data => {
+          return data?.mobileDevice
+            ? !!KnownDevices[data.mobileDevice as Device]
+            : true;
+        },
+        {
+          message: `Mobile device must be one of: ${Object.keys(
+            KnownDevices
+          ).join(', ')}.`,
+        }
+      )
+      .refine(
+        data => {
+          return data?.emulateNetworkConditions
+            ? !!PredefinedNetworkConditions[
+                data.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
+              ]
+            : true;
+        },
+        {
+          message: `Network condition must be one of: ${Object.keys(
+            PredefinedNetworkConditions
+          ).join(', ')}.`,
+        }
+      );
+
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   };
 
-  const validateGlobalConfig = () => {
-    return validate<z.infer<typeof configSchema>>(
-      configSchema,
-      globalConfig || {}
-    );
-  };
-
   return {
-    metadata,
-    execute,
+    measurePageImpactMetrics,
+    writeReportToFile,
+    validateConfig,
   };
 };

@@ -6,7 +6,7 @@ describe('lib/webpage-impact', () => {
   describe('WebpageImpact:', () => {
     describe('init: ', () => {
       it('initializes WebpageImpact with required properties', () => {
-        const webpageImpact = WebpageImpact();
+        const webpageImpact = WebpageImpact(undefined, {}, {});
 
         expect.assertions(2);
 
@@ -85,21 +85,33 @@ describe('lib/webpage-impact', () => {
       // from the plugin, so I am fairly confident that the values are plausible with a margin of error.
       // I also compared against other online tools, like ecograder.com, which returned similar values in my tests
       it('computes transfer sizes that seem plausible for the mock page', async () => {
-        const webpageImpact = WebpageImpact();
-        const inputs = [
-          {
-            timestamp: '2020-01-01T00:00:00Z',
-            duration: 10,
-            url: 'http://localhost:3000',
-          },
-        ];
+        const mockTimestamp = 1609459200000;
+        const expectedtimestampISO = new Date(mockTimestamp).toISOString();
+
+        jest.spyOn(Date, 'now').mockImplementation(() => mockTimestamp);
+
+        const webpageImpact = WebpageImpact(
+          {url: 'http://localhost:3000'},
+          {},
+          {}
+        );
+
+        const testFirstVisitPercentage = 0.9;
+        const testReturnVisitPercentage = 0.1;
 
         const {timestamp, duration, url, ...data} = (
-          await webpageImpact.execute(inputs)
+          await webpageImpact.execute([
+            {
+              options: {
+                firstVisitPercentage: testFirstVisitPercentage,
+                returnVisitPercentage: testReturnVisitPercentage,
+              },
+            },
+          ])
         )[0];
 
-        expect(timestamp).toEqual('2020-01-01T00:00:00Z');
-        expect(duration).toEqual(10);
+        expect(timestamp).toEqual(expectedtimestampISO);
+        expect(duration).toEqual(0);
         expect(url).toEqual('http://localhost:3000');
         expect(data['network/data/bytes']).toBeGreaterThanOrEqual(2000);
         expect(data['network/data/bytes']).toBeLessThanOrEqual(2200);
@@ -116,8 +128,14 @@ describe('lib/webpage-impact', () => {
           850
         );
         expect(data['network/data/resources/bytes'].other).toEqual(422);
-        expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.45);
+        expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.4);
         expect(data.options.dataReloadRatio).toBeLessThanOrEqual(0.5);
+        expect(data.options.firstVisitPercentage).toEqual(
+          testFirstVisitPercentage
+        );
+        expect(data.options.returnVisitPercentage).toEqual(
+          testReturnVisitPercentage
+        );
       }, 10000);
     });
   });

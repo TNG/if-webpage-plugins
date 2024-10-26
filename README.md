@@ -31,13 +31,10 @@ Compared to the mentioned carbon estimation websites, this pipeline has the adva
 
 - Webpage Impact
 - Green Hosting Check
-- Timer
 
 The Webpage Impact plugin can measure the page weight of a webpage. It can also estimate the `dataReloadRatio` needed for the [Sustainable Webdesign Model](https://sustainablewebdesign.org/calculating-digital-emissions/) provided by the co2js plugin.
 
 The Green Hosting Check plugin can check if a website is hosted green by querying the [database of the Green Web Foundation](https://www.thegreenwebfoundation.org/tools/green-web-dataset/).
-
-The Timer plugin is more generic. It can provide an accurate timestamp and duration for a measurement.
 
 For further info on the plugins, see their README files.
 
@@ -56,11 +53,13 @@ npm install
 npm link
 ```
 
-int the root directory. (If husky fails with a permission error, executing `chmod +x ./node_modules/husky/lib/bin.js`, also from the root directory, will probably help.)
+in the root directory. (If husky fails with a permission error, executing `chmod +x ./node_modules/husky/lib/bin.js`, also from the root directory, will probably help.)
 
 ## Example Usage (manifest file)
 
 Also see `example-manifests` directory.
+
+Note: This manifest was tested with v0.7.1 of the Impact Framework (IF). Since its interface is still subject to change, it cannot be guaranteed that this manifest and the plugins will work with future versions of IF.
 
 ```yaml
 name: webpage-impact-demo
@@ -70,43 +69,32 @@ initialize:
   outputs:
     - yaml
   plugins:
-    "timer-start":
-      method: TimerStart
-      path: '@tngtech/if-webpage-plugins'
-    "timer-stop":
-      method: TimerStop
-      path: '@tngtech/if-webpage-plugins'
-    "green-hosting":
+    'green-hosting':
       method: GreenHosting
       path: '@tngtech/if-webpage-plugins'
-    "webpage-impact":
+    'webpage-impact':
       method: WebpageImpact
       path: '@tngtech/if-webpage-plugins'
-    "co2js":
+      config:
+        scrollToBottom: false
+        url: https://www.tngtech.com/
+    'co2js':
       method: Co2js
       path: '@tngtech/if-webpage-plugins'
-      global-config:
-        options:
-          firstVisitPercentage: 0.9
-          returnVisitPercentage: 0.1
+      config:
+        type: swd
+        version: 4
 tree:
   children:
     child:
       pipeline:
-        - timer-start
-        - webpage-impact
-        - timer-stop
-        - green-hosting
-        - co2js
-      config:
-        co2js:
-          type: swd
-        webpage-impact:
-          lighthouse: true
-          scrollToBottom: true
+        observe:
+          - webpage-impact
+          - green-hosting
+        compute:
+          - co2js
       inputs:
-        - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
-          duration: 1 # will be replaced by the time it took to execute the webpage-impact plugin
-          url: https://www.tngtech.com
-          resets: [true] # tells the timer-stop method to replace timestamp and duration
+        - options: # for co2js plugin: swd model options
+            firstVisitPercentage: 0.9
+            returnVisitPercentage: 0.1
 ```
