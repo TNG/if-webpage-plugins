@@ -5,7 +5,7 @@ describe('lib/green-hosting', () => {
   describe('GreenHosting:', () => {
     describe('init green-hosting: ', () => {
       it('initializes GreenHosting with required properties', () => {
-        const greenHosting = GreenHosting();
+        const greenHosting = GreenHosting(undefined, {}, {});
 
         expect.assertions(2);
 
@@ -16,7 +16,7 @@ describe('lib/green-hosting', () => {
 
     describe('execute():', () => {
       it.each([[true], [false]])(
-        'outputs the correct check value if green hosting is %s',
+        'outputs the correct result if green hosting is %s',
         checkValue => {
           const inputs = [
             {
@@ -28,7 +28,7 @@ describe('lib/green-hosting', () => {
 
           jest.spyOn(hosting, 'check').mockImplementation(() => checkValue);
 
-          const {execute} = GreenHosting();
+          const {execute} = GreenHosting(undefined, {}, {});
           expect(execute(inputs)).resolves.toEqual([
             {
               timestamp: '2020-01-01T00:00:00Z',
@@ -49,7 +49,7 @@ describe('lib/green-hosting', () => {
           },
         ];
 
-        const {execute} = GreenHosting();
+        const {execute} = GreenHosting(undefined, {}, {});
         expect(execute(inputs)).resolves.toEqual([
           {
             timestamp: '2020-01-01T00:00:00Z',
