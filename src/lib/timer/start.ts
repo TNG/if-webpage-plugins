@@ -12,7 +12,7 @@ export const TimerStart = PluginFactory({
       'timer/start': {
         description:
           'Timestamp, usually set by a prior invocation of `TimerStart`. (But that is no requirement.)',
-        unit: 'none',
+        unit: 'ISO date string',
         'aggregation-method': {time: 'none', component: 'none'},
       },
     },

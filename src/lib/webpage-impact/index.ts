@@ -5,8 +5,6 @@
 // SPDX-FileCopyrightText: 2016 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import fs from 'fs';
-import lighthouse from 'lighthouse/core/index.cjs';
 import puppeteer, {
   HTTPRequest,
   HTTPResponse,
@@ -110,7 +108,7 @@ export const WebpageImpact = PluginFactory({
     return validateConfig(config);
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const {measurePageImpactMetrics, writeReportToFile} = WebpageImpactUtils();
+    const {measurePageImpactMetrics} = WebpageImpactUtils();
 
     if (inputs.length === 0) {
       inputs.push({});
@@ -120,19 +118,10 @@ export const WebpageImpact = PluginFactory({
       inputs.map(async input => {
         const startTime = Date.now();
 
-        const {
-          pageWeight,
-          resourceTypeWeights,
-          dataReloadRatio,
-          lighthouseResult,
-        } = await measurePageImpactMetrics(config.url, config);
+        const {pageWeight, resourceTypeWeights, dataReloadRatio} =
+          await measurePageImpactMetrics(config.url, config);
 
         const durationInSeconds = (Date.now() - startTime) / 1000;
-
-        let reportPath;
-        if (lighthouseResult) {
-          reportPath = writeReportToFile(lighthouseResult.report, input);
-        }
 
         return {
           ...input,
@@ -141,7 +130,6 @@ export const WebpageImpact = PluginFactory({
           url: config.url,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
-          ...(lighthouseResult ? {'lighthouse-report': reportPath} : {}),
           ...(config.options || dataReloadRatio // TODO not sure it is necessary to copy input.options here in every case instead of referencing them
             ? {
                 options: {
@@ -162,6 +150,7 @@ const WebpageImpactUtils = () => {
     config?: ConfigParams
   ) => {
     const computeReloadRatio = !config?.options?.dataReloadRatio;
+
     const requestHandler = (interceptedRequest: HTTPRequest) => {
       const headers = Object.assign({}, interceptedRequest.headers(), {
         ...(config?.headers?.accept && {
@@ -212,26 +201,12 @@ const WebpageImpactUtils = () => {
           scrollToBottom: config?.scrollToBottom,
         });
 
-        let lighthouseResult;
-        if (config?.lighthouse) {
-          lighthouseResult = await lighthouse(
-            url,
-            {
-              output: 'html',
-              logLevel: 'info',
-            },
-            undefined,
-            page
-          );
-        }
-
         return {
           ...computeMetrics(
             initialResources,
             reloadedResources,
             computeReloadRatio
           ),
-          lighthouseResult,
         };
       } finally {
         await browser.close();
@@ -433,30 +408,6 @@ const WebpageImpactUtils = () => {
     return Math.round(num * factor) / factor;
   };
 
-  const writeReportToFile = (
-    lighthouseReport: string | string[],
-    validatedInput: PluginParams
-  ): string => {
-    const timestamp = validatedInput['timer/start']
-      ? validatedInput['timer/start']
-      : validatedInput.timestamp;
-    const unescapedFileName = `lighthouse-report-${validatedInput.url}-${timestamp}.html`;
-
-    const fileName = getEscapedFileName(unescapedFileName);
-    fs.writeFileSync(
-      fileName,
-      Array.isArray(lighthouseReport)
-        ? lighthouseReport.join(' ')
-        : lighthouseReport,
-      'utf8'
-    );
-    return fileName;
-  };
-
-  const getEscapedFileName = (url: string): string => {
-    return url.replace(/[/\\?%*:|"<>]/g, '_');
-  };
-
   const validateConfig = (config: ConfigParams) => {
     if (!config || !Object.keys(config)?.length) {
       throw new ConfigError(MISSING_CONFIG);
@@ -522,7 +473,6 @@ const WebpageImpactUtils = () => {
 
   return {
     measurePageImpactMetrics,
-    writeReportToFile,
     validateConfig,
   };
 };

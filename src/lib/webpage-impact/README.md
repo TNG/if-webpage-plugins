@@ -1,8 +1,8 @@
 # Webpage Impact
 
-> [!NOTE] > `WebpageImpact` (based on [Puppeteer](https://github.com/puppeteer/puppeteer) and [Lighthouse](https://github.com/GoogleChrome/lighthouse)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
+> [!NOTE] > `WebpageImpact` (based on [Puppeteer](https://github.com/puppeteer/puppeteer)) is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
 
-The `WebpageImpact` plugin measures the weight of a webpage in bytes and the weights of the different loaded resources categorized by type. It can also approximate, with certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). It can also generate a Lighthouse report for further investigation, if needed. Its outputs can be fed to the [co2js plugin](https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js) to estimate carbon impacts.
+The `WebpageImpact` plugin measures the weight of a webpage in bytes and the weights of the different loaded resources categorized by type. It can also approximate, with certain restrictions, the percentage of data that needs to be reloaded if the page is revisited. The plugin is build with [Puppeteer](https://github.com/puppeteer/puppeteer). Its outputs can be fed to the [co2js plugin](https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js) to estimate carbon impacts.
 
 **Note**: The plugin and the example manifest below were tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that plugin and manifest will work with future versions of IF.
 
@@ -23,7 +23,6 @@ The follwing config parameters are optional:
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
-- `lighthouse`: boolean, if true, a lighthouse report is generated
 
 ### Returns
 
@@ -31,8 +30,6 @@ The follwing config parameters are optional:
 - `network/data/resources/bytes`: resource weights by category in bytes
 - `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
-- `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `if-run` is executed
-  if `lighthouse` is set to true in the config
 - `timestamp`: set to the time of the plugin execution
 - `duration`: set to 0 (because the request time does not seem of particular interest here to the author)
 
@@ -50,8 +47,6 @@ Several config options are provided to modify the loading of the page, e.g. emul
 
 The plugin can also approximate the `dataReloadRatio` that is needed for carbon emissions estimation with the Sustainable Webdesign Model (provided by the co2js plugin). To approximate the `dataReloadRatio` the page weight is calculated for a first visit and a return visit. The difference `weight of initial load - weight of reload` plus the weight of the resources that were loaded from browser cache on reload, is assumed to be the weight of resources that did not need reloading.
 This assumption can be off. For example if there is a lot of dynamic content on the page, that is requested only under certain conditions or at specific times. Also, cached resources provided by service workers are not taken into account. Possibly, content personalization can also distort the measurement if initial load and reload do not get comparable content.
-
-Additionally, the plugin can also generate a lighthouse report to provide additional insights into the performance of the webpage.
 
 Further remarks:
 
