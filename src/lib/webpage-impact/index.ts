@@ -24,6 +24,7 @@ type WebpageImpactOptions = {
   reload: boolean;
   cacheEnabled: boolean;
   scrollToBottom?: boolean;
+  username?: string;
 };
 
 type ResourceBase = {
@@ -176,6 +177,7 @@ const WebpageImpactUtils = () => {
           reload: false,
           cacheEnabled: false,
           scrollToBottom: config?.scrollToBottom,
+          username: config?.username,
         });
 
         let reloadedResources: Resource[] | undefined;
@@ -203,7 +205,7 @@ const WebpageImpactUtils = () => {
   const loadPageResources = async (
     page: Page,
     url: string,
-    {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions
+    {reload, cacheEnabled, scrollToBottom, username}: WebpageImpactOptions
   ): Promise<Resource[]> => {
     try {
       await page.setCacheEnabled(cacheEnabled);
@@ -254,6 +256,20 @@ const WebpageImpactUtils = () => {
 
       if (!reload) {
         await page.goto(url, {waitUntil: 'networkidle0'});
+        if (username !== undefined) {
+          const password = process.env.WI_PASSWORD;
+          if (password === undefined) {
+            throw new Error(
+              `${LOGGER_PREFIX}: Username but no password provided. Store password in environment variable 'WI_PASSWORD'.`
+            );
+          }
+          await page.type('#username', username);
+          await page.type('#password', password);
+
+          await page.click('#submit');
+
+          await page.waitForNavigation();
+        }
       } else {
         await page.reload({waitUntil: 'networkidle0'});
       }
