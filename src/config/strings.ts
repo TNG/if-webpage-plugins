@@ -7,4 +7,5 @@ export const STRINGS = {
     ERROR_MESSAGE_MISSING_START:
       'does not exist. Please use `TimerStart` to start the timer first.',
   },
+  MISSING_CONFIG: 'Config is not provided.',
 };

@@ -4,33 +4,35 @@
 import {co2} from '@tgwf/co2';
 import {z} from 'zod';
 
-import {PluginInterface} from '../../interfaces';
+import {STRINGS} from '../../config';
 import {validate} from '../../util/validations';
 
-import {buildErrorMessage, ERRORS} from '../../util/errors';
-import {ConfigParams, PluginParams} from '../../types/common';
+import {ERRORS} from '@grnsft/if-core/utils';
+import {PluginFactory} from '@grnsft/if-core/interfaces';
+import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 
-const {InputValidationError} = ERRORS;
+const {ConfigError} = ERRORS;
+const {MISSING_CONFIG} = STRINGS;
 
-export const Co2js = (): PluginInterface => {
-  const metadata = {kind: 'execute'};
-  const errorBuilder = buildErrorMessage(Co2js.name);
-  /**
-   * Executes the plugin for a list of input parameters.
-   */
-  const execute = async (inputs: PluginParams[], config?: ConfigParams) => {
-    const validatedConfig = validateConfig(config);
-    const model = new co2({model: validatedConfig.type});
+export const Co2js = PluginFactory({
+  configValidation: (
+    config: ConfigParams,
+    _input: PluginParams | undefined
+  ) => {
+    const {validateConfig} = Co2jsUtils();
+    return validateConfig(config);
+  },
+  inputValidation: (input: PluginParams, config: ConfigParams) => {
+    const {validateInput} = Co2jsUtils();
+    return validateInput(input, config);
+  },
+  implementation: async (inputs: PluginParams[], config: ConfigParams) => {
+    const model = new co2({model: config.type, version: config.version});
 
     return inputs.map(input => {
-      const validatedInput = validateInput(input, validatedConfig);
-
-      const mergedWithConfig = Object.assign(
-        {},
-        validatedConfig,
-        validatedInput
-      );
-      const result = calculateResultByParams(mergedWithConfig, model);
+      const {calculateResultByParams} = Co2jsUtils();
+      const inputMergedIntoConfig = Object.assign({}, config, input);
+      const result = calculateResultByParams(inputMergedIntoConfig, model);
 
       return result
         ? {
@@ -39,37 +41,46 @@ export const Co2js = (): PluginInterface => {
           }
         : input;
     });
-  };
+  },
+});
 
-  /**
-   * Calculates a result based on the provided static parameters type.
-   */
-  const calculateResultByParams = (
-    inputWithConfig: PluginParams,
-    model: any
-  ) => {
-    const greenhosting = inputWithConfig['green-web-host'] === true;
-    const options = inputWithConfig['options'];
-    const GBinBytes = inputWithConfig['network/data'] * 1000 * 1000 * 1000;
-    const bytes = inputWithConfig['network/data/bytes'] || GBinBytes;
-
-    const paramType: {[key: string]: () => string} = {
-      swd: () => {
-        return options
-          ? model.perVisitTrace(bytes, greenhosting, options).co2
-          : model.perVisit(bytes, greenhosting);
-      },
-      '1byte': () => {
-        return model.perByte(bytes, greenhosting);
-      },
-    };
-
-    return paramType[inputWithConfig.type]();
-  };
-
+const Co2jsUtils = () => {
   const greenWebHostSchema = z.object({
     'green-web-host': z.boolean().optional(),
   });
+
+  /**
+   * Validates node config parameters.
+   */
+  const validateConfig = (config: ConfigParams) => {
+    if (!config || !Object.keys(config)?.length) {
+      throw new ConfigError(MISSING_CONFIG);
+    }
+
+    const schema = z
+      .object({
+        type: z.enum(['1byte', 'swd']),
+        version: z.number().min(3).max(4).optional(),
+      })
+      .merge(greenWebHostSchema)
+      .refine(data => data['type'] !== undefined, {
+        message: '`type` must be provided in node config',
+      })
+      .refine(
+        data => {
+          if (data['type'] === '1byte') {
+            return data['version'] === undefined;
+          } else {
+            return true;
+          }
+        },
+        {
+          message: '`version` can only be provided with `type` swd',
+        }
+      );
+
+    return validate<z.infer<typeof schema>>(schema, config);
+  };
 
   /**
    * Validates input parameters.
@@ -129,31 +140,34 @@ export const Co2js = (): PluginInterface => {
   };
 
   /**
-   * Validates node config parameters.
+   * Calculates a result based on the provided static parameters type.
    */
-  const validateConfig = (config?: ConfigParams) => {
-    if (!config) {
-      throw new InputValidationError(
-        errorBuilder({
-          message: 'Config is not provided',
-        })
-      );
-    }
+  const calculateResultByParams = (
+    inputWithConfig: PluginParams,
+    model: any
+  ) => {
+    const greenhosting = inputWithConfig['green-web-host'] === true;
+    const options = inputWithConfig['options'];
+    const GBinBytes = inputWithConfig['network/data'] * 1000 * 1000 * 1000;
+    const bytes = inputWithConfig['network/data/bytes'] || GBinBytes;
 
-    const schema = z
-      .object({
-        type: z.enum(['1byte', 'swd']),
-      })
-      .merge(greenWebHostSchema)
-      .refine(data => data['type'] !== undefined, {
-        message: '`type` must be provided in node config',
-      });
+    const paramType: {[key: string]: () => string} = {
+      swd: () => {
+        return options
+          ? model.perVisitTrace(bytes, greenhosting, options).co2
+          : model.perVisit(bytes, greenhosting);
+      },
+      '1byte': () => {
+        return model.perByte(bytes, greenhosting);
+      },
+    };
 
-    return validate<z.infer<typeof schema>>(schema, config);
+    return paramType[inputWithConfig.type]();
   };
 
   return {
-    metadata,
-    execute,
+    validateConfig,
+    validateInput,
+    calculateResultByParams,
   };
 };

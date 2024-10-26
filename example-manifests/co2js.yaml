@@ -5,17 +5,18 @@ initialize:
   plugins:
     co2js:
       method: Co2js
-      path: '@grnsft/if-unofficial-plugins'
+      path: '@tngtech/if-webpage-plugins'
+      config:
+        type: swd
+        version: 4
   outputs:
     - yaml
 tree:
   children:
     child:
       pipeline:
-        - co2js
-      config:
-        co2js:
-          type: swd
+        compute:
+          - co2js
       inputs:
         - timestamp: 2023-07-06T00:00
           duration: 1
