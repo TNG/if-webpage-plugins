@@ -10,6 +10,7 @@
     "url": "https://github.com/TNG/if-webpage-plugins/issues"
   },
   "dependencies": {
+    "@grnsft/if-core": "^0.0.28",
     "@tgwf/co2": "^0.14.3",
     "lighthouse": "^11.7.0",
     "puppeteer": "^22.2.0",
