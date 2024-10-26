@@ -7,7 +7,7 @@ describe('lib/timer', () => {
   describe('TimerStop:', () => {
     describe('init timer: ', () => {
       it('initalizes timer stop with required properties', () => {
-        const timerStop = TimerStop();
+        const timerStop = TimerStop(undefined, {}, {});
 
         expect.assertions(2);
 
@@ -31,7 +31,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStop();
+        const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).resolves.toEqual([
           {
             timestamp: '2024-01-01T00:00:00Z',
@@ -54,7 +54,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStop();
+        const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).resolves.toEqual([
           {
             timestamp: '2021-01-01T00:00:00Z',
@@ -72,7 +72,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStop();
+        const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
           TIMER.ERROR_MESSAGE_MISSING_START.toLowerCase()
         );
@@ -87,7 +87,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStop();
+        const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
           TIMER.ERROR_MESSAGE_RESETS.toLowerCase()
         );

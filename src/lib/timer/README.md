@@ -62,16 +62,16 @@ initialize:
     exec-command:
       method: ShellExecCommand
       path: '@tngtech/if-webpage-plugins'
+      config:
+        command: 'sleep 10'
 tree:
   children:
     child:
       pipeline:
-        - timer-start
-        - exec-command
-        - timer-stop
-      config:
-        exec-command:
-          command: 'sleep 10'
+        compute:
+          - timer-start
+          - exec-command
+          - timer-stop
       inputs:
         - timestamp: 2024-02-25T00:00 # some placeholder timestamp that will be substituted by timer-start
           duration: 1 # if reset = true this will be overwritten, otherwise it will be added to
@@ -86,19 +86,17 @@ tree:
   children:
     child:
       pipeline:
-        - timer-start
-        - exec-command
-        - timer-stop
-      config:
-        exec-command:
-          command: sleep 1
+        compute:
+          - timer-start
+          - exec-command
+          - timer-stop
       inputs:
         - timestamp: 2024-02-25T00:00
           duration: 1
           resets:
             - true
       outputs:
-        - timestamp: '2024-09-08T19:44:29.657Z'
-          duration: 1.017
+        - timestamp: '2024-10-26T10:46:45.300Z'
+          duration: 10.017
           stdout: ''
 ```

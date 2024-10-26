@@ -7,7 +7,7 @@ describe('lib/timer', () => {
   describe('TimerStart:', () => {
     describe('init timer: ', () => {
       it('initalizes timer start with required properties', () => {
-        const timerStart = TimerStart();
+        const timerStart = TimerStart(undefined, {}, {});
 
         expect.assertions(2);
 
@@ -30,7 +30,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStart();
+        const {execute} = TimerStart(undefined, {}, {});
         await expect(execute(inputs)).resolves.toEqual([
           {
             timestamp: '2020-01-01T00:00:00Z',
@@ -49,7 +49,7 @@ describe('lib/timer', () => {
           },
         ];
 
-        const {execute} = TimerStart();
+        const {execute} = TimerStart(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
           TIMER.ERROR_MESSAGE_EXISTING_START
         );
