@@ -1,7 +1,7 @@
-import {buildErrorMessage, ERRORS} from '../../util/errors';
 import {STRINGS} from '../../config';
 import {PluginFactory} from '@grnsft/if-core/interfaces';
 import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
+import {ERRORS} from '@grnsft/if-core/utils/errors';
 
 const {InputValidationError} = ERRORS;
 const {TIMER} = STRINGS;
@@ -18,14 +18,10 @@ export const TimerStart = PluginFactory({
     },
   },
   implementation: async (inputs: PluginParams[], _config: ConfigParams) => {
-    const errorBuilder = buildErrorMessage(TimerStart.name);
-
     return inputs.map(input => {
       if (input['timer/start']) {
         throw new InputValidationError(
-          errorBuilder({
-            message: TIMER.ERROR_MESSAGE_EXISTING_START,
-          })
+          `TimerStart: ${TIMER.ERROR_MESSAGE_EXISTING_START}`
         );
       }
       const startTime = new Date(Date.now()).toISOString();
