@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@grnsft/if-core": "^0.0.28",
-    "@tgwf/co2": "^0.14.3",
+    "@tgwf/co2": "^0.16.1",
     "lighthouse": "^11.7.0",
     "puppeteer": "^22.2.0",
     "tldjs": "^2.3.1",
@@ -28,7 +28,7 @@
     "@types/jest": "^29.5.7",
     "@types/js-yaml": "^4.0.8",
     "@types/node": "^20.4.5",
-    "@types/tgwf__co2": "^0.14.1",
+    "@types/tgwf__co2": "^0.14.2",
     "@types/tldjs": "^2.3.4",
     "express": "^4.19.2",
     "fixpack": "4.0.0",
