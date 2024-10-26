@@ -5,42 +5,31 @@ initialize:
   outputs:
     - yaml
   plugins:
-    'timer-start':
-      method: TimerStart
-      path: '@tngtech/if-webpage-plugins'
-    'timer-stop':
-      method: TimerStop
-      path: '@tngtech/if-webpage-plugins'
     'green-hosting':
       method: GreenHosting
       path: '@tngtech/if-webpage-plugins'
     'webpage-impact':
       method: WebpageImpact
       path: '@tngtech/if-webpage-plugins'
+      config:
+        scrollToBottom: true
+        url: https://www.thegreenwebfoundation.org/
     'co2js':
       method: Co2js
       path: '@tngtech/if-webpage-plugins'
+      config:
+        type: swd
+        version: 4
 tree:
   children:
     child:
       pipeline:
-        - timer-start
-        - webpage-impact
-        - timer-stop
-        - green-hosting
-        - co2js
-      config:
-        co2js:
-          type: swd
-        webpage-impact:
-          scrollToBottom: false
-          # mobileDevice: 'Pixel 2'
-          # lighthouse: true
+        observe:
+          - webpage-impact
+          - green-hosting
+        compute:
+          - co2js
       inputs:
-        - timestamp: '2024-01-01T00:00:00Z' # will be replaced by the actual timestamp
-          duration: 1 # will be replaced by the time it took to execute the webpage-impact plugin
-          url: https://www.thegreenwebfoundation.org/
-          resets: [true] # tells the timer-stop method to replace timestamp and duration
-          options: # swd model options (co2js plugin)
+        - options: # swd model options (co2js plugin)
             firstVisitPercentage: 0.9
             returnVisitPercentage: 0.1

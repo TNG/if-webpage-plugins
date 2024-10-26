@@ -6,33 +6,33 @@ The `WebpageImpact` plugin measures the weight of a webpage in bytes and the wei
 
 ## Parameters
 
-### Global Config and Config
+`WebpageImpact` is intended to be used in the `observe` phase of the manifest computation. Thus, the `url` for measurement is passed as a config option.
 
-The following parameters are optional and can be set in the global config or in the config of the plugin node.
+### Config
+
+- `url`: the URL of the webpage to measure (has to include the protocol type, like https://)
+
+The follwing config parameters are optional:
 
 - `mobileDevice:`: You can pick a mobile device to emulate. Must be one of puppeteer's known devices: https://pptr.dev/api/puppeteer.knowndevices
 - `emulateNetworkConditions`: You can pick one of puppeteer's predefined network conditions: https://pptr.dev/api/puppeteer.predefinednetworkconditions
 - `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default: false.
-- `timeout`: Maximum wait time in milliseconds for page load. Pass 0 to disable the timeout. Default: 30000 ms. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
+- `timeout`: Maximum wait time in milliseconds for page load. Default: 30000 ms. https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
 - `lighthouse`: boolean, if true, a lighthouse report is generated
 
-If parameters are provided twice, the node config is taking precedence.
-
-### Inputs
-
-- `url`: the URL of the webpage to measure (has to include the protocol type, like https://)
-
 ### Returns
 
 - `network/data/bytes`: page weight in bytes
-- `network/data/resources/bytes`: resources weights by category in bytes
+- `network/data/resources/bytes`: resource weights by category in bytes
 - `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
   if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
 - `lighthouse-report`: file name of the full lighthouse report, stored in html format in the directory in which `if-run` is executed
   if `lighthouse` is set to true in the config
+- `timestamp`: set to the time of the plugin execution
+- `duration`: set to 0 (because the request time does not seem of particular interest here to the author)
 
 ### Error Handling
 
@@ -71,14 +71,13 @@ initialize:
     'webpage-impact':
       method: WebpageImpact
       path: '@tngtech/if-webpage-plugins'
+      config:
+        url: 'https://tngtech.com'
 tree:
   children:
     child:
       pipeline:
-        - webpage-impact
-      config:
+        observe:
+          - webpage-impact
       inputs:
-        - timestamp: 2024-02-25T00:00
-          duration: 1
-          url: 'https://tngtech.com'
 ```
