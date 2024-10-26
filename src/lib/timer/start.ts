@@ -1,6 +1,5 @@
 import {PluginInterface} from '../../interfaces';
-import {buildErrorMessage} from '../../util/helpers';
-import {ERRORS} from '../../util/errors';
+import {buildErrorMessage, ERRORS} from '../../util/errors';
 import {STRINGS} from '../../config';
 import {PluginParams} from '../../types/common';
 

@@ -1,50 +1,56 @@
 import {exec} from 'child_process';
 import {z} from 'zod';
 
-import {PluginInterface} from '../../interfaces';
-import {ConfigParams, PluginParams} from '../../types/common';
-
 import {validate} from '../../util/validations';
 import * as util from 'util';
+import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
+import {PluginFactory} from '@grnsft/if-core/interfaces';
+import {addCurrentTimestampAndDurationIfMissing} from '../../util/helpers';
 
 export const execAsync = util.promisify(exec);
 
-export const ShellExecCommand = (): PluginInterface => {
-  const metadata = {
-    kind: 'execute',
-  };
-
-  /**
-   * Execute the command for a list of inputs.
-   */
-  const execute = async (inputs: PluginParams[], config?: ConfigParams) => {
-    const {command} = validateConfig(config);
-    return await Promise.all(
-      inputs.map(async input => {
-        try {
-          const {stdout} = await execAsync(command);
-          return {...input, stdout: stdout.trim()};
-        } catch (error) {
-          console.log(`Error running the command: ${error}`);
-          return input;
-        }
-      })
-    );
-  };
-
-  /**
-   * Checks for required fields in input.
-   */
-  const validateConfig = (config?: ConfigParams) => {
+export const ShellExecCommand = PluginFactory({
+  metadata: {
+    outputs: {
+      stdout: {
+        description:
+          'Stdout of the executed command. Errors are logged instead of returned.',
+        unit: 'none',
+        'aggregation-method': {time: 'none', component: 'none'},
+      },
+    },
+  },
+  configValidation: (
+    config: ConfigParams,
+    _input: PluginParams | undefined
+  ) => {
     const schema = z.object({
       command: z.string(),
     });
 
     return validate<z.infer<typeof schema>>(schema, config);
-  };
-
-  return {
-    metadata,
-    execute,
-  };
-};
+  },
+  implementation: async (inputs: PluginParams[], config: ConfigParams) => {
+    const {command} = config;
+    if (inputs.length === 0) {
+      inputs.push({});
+    }
+    return await Promise.all(
+      inputs.map(async input => {
+        try {
+          const start = Date.now();
+          const {stdout} = await execAsync(command);
+          const durationInSeconds = (Date.now() - start) / 1000;
+          input = addCurrentTimestampAndDurationIfMissing(
+            input,
+            durationInSeconds
+          );
+          return {...input, stdout: stdout.trim()};
+        } catch (error) {
+          console.error(`Error running the command: ${error}`); // the promisfied version rejects the promise if return code != 0
+          return input;
+        }
+      })
+    );
+  },
+});

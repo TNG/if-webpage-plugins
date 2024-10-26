@@ -1,14 +1,15 @@
-// SPDX-FileCopyrightText: 2023 Green Software Foundation
-// SPDX-License-Identifier: MIT
+import {PluginParams} from '@grnsft/if-core/types';
 
-import {ErrorFormatParams} from '../types/helpers';
-
-/**
- * Formats given error according to class instance, scope and message.
- */
-export const buildErrorMessage =
-  (classInstanceName: string) => (params: ErrorFormatParams) => {
-    const {scope, message} = params;
-
-    return `${classInstanceName}${scope ? `(${scope})` : ''}: ${message}.`;
-  };
+export const addCurrentTimestampAndDurationIfMissing = (
+  input: PluginParams,
+  duration: number
+) => {
+  if (input.timestamp === undefined && input.duration === undefined) {
+    input = {
+      timestamp: new Date().toISOString(),
+      duration: duration,
+      ...input,
+    };
+  }
+  return input;
+};

@@ -8,7 +8,7 @@ The `ShellExecCommand` plugin allows you to run shell commands within a plugin i
 
 ## config
 
-- `command`: The shell command to be executed.
+- `command`: String, the shell command to be executed.
 
 ## observations
 
@@ -34,18 +34,17 @@ initialize:
   plugins:
     exec-command:
       method: ShellExecCommand
-      path: '@TNG/if-webpage-plugins'
+      path: '@tngtech/if-webpage-plugins'
+      config:
+        exec-command:
+          command: 'echo "Hello, World!"'
 tree:
   children:
     child:
       pipeline:
-        - exec-command
-      config:
-        exec-command:
-          command: 'echo "Hello, World!"'
+        compute:
+          - exec-command
       inputs:
-        - timestamp: 2024-02-25T00:00
-          duration: 1
 ```
 
 The produced `outputs` look like in this example:
@@ -53,27 +52,24 @@ The produced `outputs` look like in this example:
 ```yaml
 name: exec-shell-command-demo
 description: example manifest invoking exec-shell-command
-tags:
+tags: null
 initialize:
-  outputs:
-    - yaml
   plugins:
     exec-command:
-      method: ShellExecCommand
       path: '@tngtech/if-webpage-plugins'
+      method: ShellExecCommand
+      config:
+        command: echo "Hello, World!"
+...
 tree:
   children:
     child:
       pipeline:
-        - exec-command
-      config:
-        exec-command:
-          command: 'echo "Hello, World!"'
-      inputs:
-        - timestamp: 2024-02-25T00:00
-          duration: 1
+        compute:
+          - exec-command
+      inputs: null
       outputs:
-        - timestamp: 2024-02-25T00:00
-          duration: 1
+        - timestamp: '2024-10-26T10:14:16.716Z'
+          duration: 0.002
           stdout: Hello, World!
 ```
