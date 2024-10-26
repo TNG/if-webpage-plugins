@@ -4,6 +4,8 @@
 
 The `ShellExecCommand` plugin allows you to run shell commands within a plugin in your manifest file. This can be useful for running scripts or other commands that are not natively supported by IF.
 
+**Note**: The plugin and the example manifest below were tested with v0.7.1 of the Impact Framework (IF). Since IF's interface is still subject to change, it cannot be guaranteed that plugin and manifest will work with future versions of IF.
+
 ## Parameters
 
 ## config
