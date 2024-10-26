@@ -6,7 +6,7 @@ export const addCurrentTimestampAndDurationIfMissing = (
 ) => {
   if (input.timestamp === undefined && input.duration === undefined) {
     input = {
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(Date.now()).toISOString(),
       duration: duration,
       ...input,
     };

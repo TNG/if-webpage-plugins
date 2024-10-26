@@ -59,6 +59,29 @@ describe('lib/green-hosting', () => {
           },
         ]);
       });
+
+      it('adds timestamp and duration if both are missing', () => {
+        const timestamp = 1609459200000;
+        const timestampISO = new Date(timestamp).toISOString();
+
+        jest.spyOn(Date, 'now').mockImplementation(() => timestamp);
+
+        const inputs = [
+          {
+            url: 'https://ex%%%ample.com',
+          },
+        ];
+
+        const {execute} = GreenHosting(undefined, {}, {});
+        expect(execute(inputs)).resolves.toEqual([
+          {
+            timestamp: timestampISO,
+            duration: 0,
+            url: 'https://ex%%%ample.com',
+            'green-web-host': undefined,
+          },
+        ]);
+      });
     });
   });
 });

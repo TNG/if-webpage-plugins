@@ -12,7 +12,7 @@ The `GreenHosting` plugin checks whether the domain of the provided url is hoste
 
 ## Returns
 
-- `green-hosting`: Boolean or undefined, indicating whether a web page is hosted green or not according to the Green Web Foundation's [green web check database](https://www.thegreenwebfoundation.org/green-web-check/). Undefined is returned if the domain could not be extracted from the url.
+- `green-hosting`: Boolean or undefined, indicating whether a web page is hosted green or not according to the Green Web Foundation's [green web check database](https://www.thegreenwebfoundation.org/green-web-check/). Undefined is returned if no valid domain could be extracted from the url.
 - `timestamp`: If timestamp and duration are missing, the plugin writes the current timestamp.
 - `duration`: If timestamp and duration are missing, the plugin sets duration to 0. (The plugin makes a web request whose duration is of no interest to the plugin author.)
 
