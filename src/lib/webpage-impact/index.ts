@@ -1,17 +1,12 @@
 // SPDX-FileCopyrightText: 2024 Alexander zur Bonsen
 // SPDX SPDX-License-Identifier: Apache-2.0
 
-// for parts marked as originating from Lighthouse:
-// SPDX-FileCopyrightText: 2016 Google LLC
-// SPDX-License-Identifier: Apache-2.0
-
 import puppeteer, {
   HTTPRequest,
-  HTTPResponse,
   KnownDevices,
   Page,
   PredefinedNetworkConditions,
-  ResourceType,
+  Protocol,
 } from 'puppeteer';
 import {z} from 'zod';
 
@@ -33,10 +28,8 @@ type WebpageImpactOptions = {
 
 type ResourceBase = {
   url: string;
-  resourceSize: number;
-  type: ResourceType;
-  fromCache: boolean;
-  fromServiceWorker: boolean;
+  status: number;
+  type: Protocol.Network.ResourceType;
 };
 
 type Resource = ResourceBase & {transferSize: number};
@@ -44,17 +37,6 @@ type Resource = ResourceBase & {transferSize: number};
 type Device = keyof typeof KnownDevices;
 
 const LOGGER_PREFIX = 'WebpageImpact';
-
-// copied from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js#L21
-// because it is not exported there
-const NON_NETWORK_SCHEMES = [
-  'blob', // @see https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
-  'data', // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
-  'intent', // @see https://developer.chrome.com/docs/multidevice/android/intents/
-  'file', // @see https://en.wikipedia.org/wiki/File_URI_scheme
-  'filesystem', // @see https://developer.mozilla.org/en-US/docs/Web/API/FileSystem
-  'chrome-extension',
-];
 
 const ALLOWED_ENCODINGS = [
   'gzip',
@@ -118,8 +100,14 @@ export const WebpageImpact = PluginFactory({
       inputs.map(async input => {
         const startTime = Date.now();
 
+        const computeReloadRatio = !input?.options?.dataReloadRatio;
+
         const {pageWeight, resourceTypeWeights, dataReloadRatio} =
-          await measurePageImpactMetrics(config.url, config);
+          await measurePageImpactMetrics(
+            config.url,
+            computeReloadRatio,
+            config
+          );
 
         const durationInSeconds = (Date.now() - startTime) / 1000;
 
@@ -130,7 +118,7 @@ export const WebpageImpact = PluginFactory({
           url: config.url,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
-          ...(config.options || dataReloadRatio // TODO not sure it is necessary to copy input.options here in every case instead of referencing them
+          ...(dataReloadRatio
             ? {
                 options: {
                   ...input.options,
@@ -147,10 +135,9 @@ export const WebpageImpact = PluginFactory({
 const WebpageImpactUtils = () => {
   const measurePageImpactMetrics = async (
     url: string,
+    computeReloadRatio: boolean,
     config?: ConfigParams
   ) => {
-    const computeReloadRatio = !config?.options?.dataReloadRatio;
-
     const requestHandler = (interceptedRequest: HTTPRequest) => {
       const headers = Object.assign({}, interceptedRequest.headers(), {
         ...(config?.headers?.accept && {
@@ -195,18 +182,17 @@ const WebpageImpactUtils = () => {
           scrollToBottom: config?.scrollToBottom,
         });
 
-        const reloadedResources = await loadPageResources(page, url, {
-          reload: true,
-          cacheEnabled: true,
-          scrollToBottom: config?.scrollToBottom,
-        });
+        let reloadedResources: Resource[] | undefined;
+        if (computeReloadRatio) {
+          reloadedResources = await loadPageResources(page, url, {
+            reload: true,
+            cacheEnabled: true,
+            scrollToBottom: config?.scrollToBottom,
+          });
+        }
 
         return {
-          ...computeMetrics(
-            initialResources,
-            reloadedResources,
-            computeReloadRatio
-          ),
+          ...computeMetrics(initialResources, reloadedResources),
         };
       } finally {
         await browser.close();
@@ -222,50 +208,53 @@ const WebpageImpactUtils = () => {
     page: Page,
     url: string,
     {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions
-  ) => {
-    const pageResources: ResourceBase[] = [];
-
-    const responseHandler = async (response: HTTPResponse) => {
-      try {
-        if (isFromNonNetworkRequest(response) || hasNoResponseBody(response)) {
-          return;
-        }
-        const resource = {
-          url: response.url(),
-          resourceSize: (await response.buffer()).length,
-          fromCache: response.fromCache(),
-          fromServiceWorker: response.fromServiceWorker(),
-          type: response.request().resourceType(),
-        };
-        pageResources.push(resource);
-      } catch (error) {
-        console.debug(
-          `${LOGGER_PREFIX}: Couldn't load ${response.url()}, status: ${response.status()}: ${error}`
-        );
-      }
-    };
-
+  ): Promise<Resource[]> => {
     try {
       await page.setCacheEnabled(cacheEnabled);
 
-      // the transfer size of a resource is not available from puppeteer's reponse object
-      // need to take the detour via a Chrome devtools protcol session to read it out
-      const cdpIntermediateStore = new Map<string, {url: string}>();
-      const cdpResponses = new Map<string, {encodedDataLength: number}>();
+      // The transfer size of a resource is not available from puppeteer's reponse object.
+      // Need to take the detour via a Chrome devtools protcol session to get it.
+      // https://chromedevtools.github.io/devtools-protocol/tot/Network/
+      const cdpResponses: Record<string, ResourceBase> = {};
+      const cdpTransferSizes: Record<string, {transferSize: number}> = {};
       const cdpSession = await page.createCDPSession();
       await cdpSession.send('Network.enable');
       cdpSession.on('Network.responseReceived', event => {
-        cdpIntermediateStore.set(event.requestId, {url: event.response.url});
+        cdpResponses[event.requestId] = {
+          url: event.response.url,
+          status: event.response.status,
+          type: event.type,
+        };
       });
+      // Transfer size
+      // 1) Response served from web
+      // Network.responseReceived event only contains the number of bytes received for
+      // the request so far / when the initial response is received.
+      // The final number can is sent with Network.loadingFinished.
+      //
+      // 2) Response served from cache
+      // If the resource is served from cache, Network.responseReceived contains the
+      // size of the cached response, while Network.loadingFinished reports size of 0.
       cdpSession.on('Network.loadingFinished', event => {
-        const response = cdpIntermediateStore.get(event.requestId);
-        response &&
-          cdpResponses.set(response.url, {
-            encodedDataLength: event.encodedDataLength,
-          });
+        cdpTransferSizes[event.requestId] = {
+          transferSize: event.encodedDataLength,
+        };
       });
 
-      page.on('response', responseHandler);
+      // TODO: Currently, the amount of cached resources is determined by
+      // relying on `encodedDataLength` of the `Network.loadingFinished` event.
+      // It is 0 if the response was served from cache, which corresponds to
+      // `Network.requestServedFromCache` being true.
+      // Potentially this can be improved to excluded prefetched responses.
+      //
+      // Furter Notes:
+      // I haven't found good documentation about this event yet, but I assume it also includes prefetch cache
+      // which I would want to exclude ideally, because it does not reuse data.
+      // Network.responseReceived event contains two values,
+      // fromDiskCache and fromPrefetchCache, that allow to derive
+      // if an item was served from cache. But that misses memory cache.
+      // (There is also fromServiceWorker, but I don't think that allows a conclusion about caching,
+      // depends on what the service worker does.)
 
       if (!reload) {
         await page.goto(url, {waitUntil: 'networkidle0'});
@@ -279,10 +268,9 @@ const WebpageImpactUtils = () => {
         // await page.screenshot({path: './BOTTOM.png'});
       }
 
-      page.off('response', responseHandler);
       await cdpSession.detach();
 
-      return mergeCdpResponsesIntoResources(pageResources, cdpResponses);
+      return mergeCdpData(cdpResponses, cdpTransferSizes);
     } catch (error) {
       throw new Error(
         `${LOGGER_PREFIX}: Error while loading webpage: ${error}`
@@ -290,41 +278,24 @@ const WebpageImpactUtils = () => {
     }
   };
 
-  // modified from lighthouse https://github.com/GoogleChrome/lighthouse/blob/main/core/lib/url-utils.js
-  const isFromNonNetworkRequest = (response: HTTPResponse) => {
-    const url = response.request().url();
-    return NON_NETWORK_SCHEMES.some(scheme => url.startsWith(`${scheme}:`));
-  };
-
-  const hasNoResponseBody = (response: HTTPResponse) => {
-    return (
-      response.status() === 204 || // no content
-      (response.status() >= 300 && response.status() < 400) || // redirect
-      response.request().method() === 'OPTIONS' // request for options https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
-    );
-  };
-
-  const mergeCdpResponsesIntoResources = (
-    pageResources: ResourceBase[],
-    cdpResponses: Map<string, {encodedDataLength: number}>
-  ) => {
-    return pageResources.map(resource => {
-      const cdpResponse = cdpResponses.get(resource.url);
-      if (!cdpResponse) {
+  const mergeCdpData = (
+    cdpResponses: Record<string, ResourceBase>,
+    cdpTransferSizes: Record<string, {transferSize: number}>
+  ): Resource[] => {
+    const pageResources: Resource[] = [];
+    for (const [requestId, response] of Object.entries(cdpResponses)) {
+      const transferSize = cdpTransferSizes[requestId]?.transferSize;
+      if (transferSize === undefined) {
         console.debug(
-          `${LOGGER_PREFIX}: No encoded data length for resource: ${resource.url}`
+          `${LOGGER_PREFIX}: No transfer size found for resource ${response.url}, status: ${response.status}`
         );
       }
-      return cdpResponse
-        ? ({
-            ...resource,
-            transferSize: cdpResponse.encodedDataLength,
-          } as Resource)
-        : ({
-            ...resource,
-            transferSize: 0,
-          } as Resource);
-    });
+      pageResources.push({
+        ...response,
+        transferSize: transferSize ?? 0,
+      });
+    }
+    return pageResources;
   };
 
   const scrollToBottomOfPage = async () => {
@@ -346,8 +317,7 @@ const WebpageImpactUtils = () => {
 
   const computeMetrics = (
     initialResources: Resource[],
-    reloadResources: Resource[],
-    computeReloadRatio: boolean
+    reloadResources: Resource[] | undefined
   ) => {
     const resourceTypeWeights = initialResources.reduce(
       (acc, resource) => {
@@ -358,40 +328,30 @@ const WebpageImpactUtils = () => {
         }
         return acc;
       },
-      {} as Record<ResourceType, number>
+      {} as Record<Protocol.Network.ResourceType, number>
     );
     const initialPageWeight = Object.values(resourceTypeWeights).reduce(
       (acc, resourceTypeSize) => acc + resourceTypeSize,
       0
     );
 
+    // dataReloadRatio: this is an attempt to get a heuristic value
+
+    // Caveats:
+    // 1) the older pre-fetch syntax (<link rel="prefetch">) stored
+    //    responses in disk cache as well (https://developer.chrome.com/docs/devtools/application/debugging-speculation-rules)
+    // 2) dynamic content loading, see README
     let dataReloadRatio: number | undefined;
-    if (computeReloadRatio) {
-      const initialCacheWeight = initialResources.reduce(
-        (acc, resource) =>
-          acc + (resource.fromCache ? resource.transferSize : 0),
-        0
-      );
-      if (initialCacheWeight > 0) {
-        console.warn(
-          `${LOGGER_PREFIX}: Initial page load contained resources from cache.`
-        );
-      }
+    if (reloadResources !== undefined) {
       const reloadPageWeight = reloadResources.reduce(
         (acc, resource) => acc + resource.transferSize,
         0
       );
 
-      const assumeFromCache = initialPageWeight - reloadPageWeight;
-      const browserCache = reloadResources.reduce(
-        (acc, resource) =>
-          acc + (resource.fromCache ? resource.transferSize : 0),
-        0
-      );
-      const assumedCacheWeight = assumeFromCache + browserCache;
+      const fromCache = initialPageWeight - reloadPageWeight;
 
       dataReloadRatio = roundToDecimalPlaces(
-        (initialPageWeight - assumedCacheWeight) / initialPageWeight,
+        (initialPageWeight - fromCache) / initialPageWeight,
         2
       );
     }
@@ -432,7 +392,6 @@ const WebpageImpactUtils = () => {
           dataReloadRatio: z.number().optional(),
         })
         .optional(),
-      lighthouse: z.boolean().optional(),
     });
 
     const configSchema = z
