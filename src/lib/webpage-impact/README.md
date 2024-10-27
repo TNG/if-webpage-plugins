@@ -28,8 +28,8 @@ The follwing config parameters are optional:
 
 - `network/data/bytes`: page weight in bytes
 - `network/data/resources/bytes`: resource weights by category in bytes
-- `dataReloadRatio`: the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
-  if `options.dataReloadRatio` is already provided in input, the plugin won't calculate it
+- `dataReloadRatio`: an estimate of the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
+  if `options.dataReloadRatio` is already provided as an input, the plugin won't calculate it
 - `timestamp`: set to the time of the plugin execution
 - `duration`: set to 0 (because the request time does not seem of particular interest here to the author)
 
@@ -45,8 +45,10 @@ The page weight (the number of bytes transferred to load the page) can be feed i
 
 Several config options are provided to modify the loading of the page, e.g. emulating a mobile device and network conditions. By scrolling to the bottom of the page one can also take into account lazy loaded resources. Custom accept and accept-encoding request headers can also be provided.
 
-The plugin can also approximate the `dataReloadRatio` that is needed for carbon emissions estimation with the Sustainable Webdesign Model (provided by the co2js plugin). To approximate the `dataReloadRatio` the page weight is calculated for a first visit and a return visit. The difference `weight of initial load - weight of reload` plus the weight of the resources that were loaded from browser cache on reload, is assumed to be the weight of resources that did not need reloading.
-This assumption can be off. For example if there is a lot of dynamic content on the page, that is requested only under certain conditions or at specific times. Also, cached resources provided by service workers are not taken into account. Possibly, content personalization can also distort the measurement if initial load and reload do not get comparable content.
+Please note: The reported page weight may be smaller than what you expect. For example, a web page might load additional resources after the cookie banner has been closed by the user. The plugin does not interact with the page, except for the option to scroll to the bottom of the page.
+
+The plugin can also approximate the `dataReloadRatio` that is needed for carbon emissions estimation with the Sustainable Webdesign Model (provided by the co2js plugin). To approximate the `dataReloadRatio` the page weight is calculated for a first visit and a return visit. All the weight of all resources that were served from cache on reload are substracted from the page weight to get the `dataReloadRatio`.
+This assumption can be off. For example if there is a lot of dynamic content on the page, that is requested only under certain conditions or at specific times. Possibly, content personalization can also distort the measurement if initial load and reload do not get comparable content. Also, prefetched requests might be served from cache and are counted as reloaded in this case, even though no data was reused.
 
 Further remarks:
 

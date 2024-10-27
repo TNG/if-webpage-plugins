@@ -110,25 +110,26 @@ describe('lib/webpage-impact', () => {
           ])
         )[0];
 
+        console.log(data);
         expect(timestamp).toEqual(expectedtimestampISO);
         expect(duration).toEqual(0);
         expect(url).toEqual('http://localhost:3000');
         expect(data['network/data/bytes']).toBeGreaterThanOrEqual(2000);
         expect(data['network/data/bytes']).toBeLessThanOrEqual(2200);
         expect(
-          data['network/data/resources/bytes'].document
+          data['network/data/resources/bytes']['Document']
         ).toBeGreaterThanOrEqual(800);
         expect(
-          data['network/data/resources/bytes'].document
+          data['network/data/resources/bytes']['Document']
         ).toBeLessThanOrEqual(850);
         expect(
-          data['network/data/resources/bytes'].fetch
+          data['network/data/resources/bytes']['Fetch']
         ).toBeGreaterThanOrEqual(800);
-        expect(data['network/data/resources/bytes'].fetch).toBeLessThanOrEqual(
-          850
-        );
-        expect(data['network/data/resources/bytes'].other).toEqual(422);
-        expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.4);
+        expect(
+          data['network/data/resources/bytes']['Fetch']
+        ).toBeLessThanOrEqual(850);
+        expect(data['network/data/resources/bytes']['Other']).toEqual(422);
+        expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.45);
         expect(data.options.dataReloadRatio).toBeLessThanOrEqual(0.5);
         expect(data.options.firstVisitPercentage).toEqual(
           testFirstVisitPercentage

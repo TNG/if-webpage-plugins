@@ -13,7 +13,7 @@ initialize:
       path: '@tngtech/if-webpage-plugins'
       config:
         scrollToBottom: true
-        url: https://www.thegreenwebfoundation.org/
+        url: https://www.tngtech.com
     'co2js':
       method: Co2js
       path: '@tngtech/if-webpage-plugins'
