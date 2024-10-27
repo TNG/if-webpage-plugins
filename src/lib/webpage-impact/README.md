@@ -25,6 +25,10 @@ The follwing config parameters are optional:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
 
+Experimental:
+
+- `customUserInteraction`: absolute path to a Javascript Common JS module, that exports a function with the signature `userInteraction: (page: Page) => Promise<void>`. For an example see below. Setting `customUserInteraction` cannot be set together with `scrollToBottom`.
+
 ### Returns
 
 - `network/data/bytes`: page weight in bytes
@@ -81,3 +85,26 @@ tree:
           - webpage-impact
       inputs:
 ```
+
+## Experimental: Custom user interactions
+
+Example script:
+
+```js
+const userInteraction = async page => {
+  // on tngtech.com click on the "Leistungen" link
+  await page.locator('#menu > ul > li:nth-child(1) > a').click();
+  await page.waitForNavigation();
+
+  // for debugging purposes
+  await page.screenshot({
+    path: '/absolute/path/image.png',
+  });
+};
+
+exports.userInteraction = userInteraction;
+```
+
+Puppeteer docs on page interactions: https://pptr.dev/guides/page-interactions
+
+TODO: How to deal with the reload option?

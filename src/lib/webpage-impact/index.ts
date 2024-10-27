@@ -24,6 +24,7 @@ type WebpageImpactOptions = {
   reload: boolean;
   cacheEnabled: boolean;
   scrollToBottom?: boolean;
+  customUserInteraction?: string;
 };
 
 type ResourceBase = {
@@ -35,6 +36,10 @@ type ResourceBase = {
 type Resource = ResourceBase & {transferSize: number};
 
 type Device = keyof typeof KnownDevices;
+
+interface CustomUserInteraction {
+  userInteraction: (page: Page) => Promise<void>;
+}
 
 const LOGGER_PREFIX = 'WebpageImpact';
 
@@ -176,6 +181,7 @@ const WebpageImpactUtils = () => {
           reload: false,
           cacheEnabled: false,
           scrollToBottom: config?.scrollToBottom,
+          customUserInteraction: config?.customUserInteraction,
         });
 
         let reloadedResources: Resource[] | undefined;
@@ -203,7 +209,12 @@ const WebpageImpactUtils = () => {
   const loadPageResources = async (
     page: Page,
     url: string,
-    {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions
+    {
+      reload,
+      cacheEnabled,
+      scrollToBottom,
+      customUserInteraction,
+    }: WebpageImpactOptions
   ): Promise<Resource[]> => {
     try {
       await page.setCacheEnabled(cacheEnabled);
@@ -254,14 +265,19 @@ const WebpageImpactUtils = () => {
 
       if (!reload) {
         await page.goto(url, {waitUntil: 'networkidle0'});
+        if (customUserInteraction) {
+          const module = await import(customUserInteraction);
+          if (iscustomUserInteraction(module)) {
+            await module.userInteraction(page);
+          }
+        }
       } else {
+        console.log('before reload');
         await page.reload({waitUntil: 'networkidle0'});
       }
 
-      if (scrollToBottom) {
-        // await page.screenshot({path: './TOP.png'});
+      if (!customUserInteraction && scrollToBottom) {
         await page.evaluate(scrollToBottomOfPage);
-        // await page.screenshot({path: './BOTTOM.png'});
       }
 
       await cdpSession.detach();
@@ -272,6 +288,15 @@ const WebpageImpactUtils = () => {
         `${LOGGER_PREFIX}: Error while loading webpage: ${error}`
       );
     }
+  };
+
+  const iscustomUserInteraction = (
+    customUserInteraction: any
+  ): customUserInteraction is CustomUserInteraction => {
+    return (
+      'userInteraction' in customUserInteraction &&
+      typeof customUserInteraction['userInteraction'] === 'function'
+    );
   };
 
   const mergeCdpData = (
@@ -375,6 +400,7 @@ const WebpageImpactUtils = () => {
       mobileDevice: z.string().optional(),
       emulateNetworkConditions: z.string().optional(),
       scrollToBottom: z.boolean().optional(),
+      customUserInteraction: z.string().optional(),
       headers: z
         .object({
           accept: z.string().optional(),
@@ -416,6 +442,15 @@ const WebpageImpactUtils = () => {
           message: `Network condition must be one of: ${Object.keys(
             PredefinedNetworkConditions
           ).join(', ')}.`,
+        }
+      )
+      .refine(
+        data => {
+          return !(data?.scrollToBottom && data?.customUserInteraction);
+        },
+        {
+          message:
+            '`scrollToBottom: true` and `customUserInteraction` cannot be provided together.',
         }
       );
 
