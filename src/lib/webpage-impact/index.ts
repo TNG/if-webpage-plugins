@@ -171,6 +171,9 @@ const WebpageImpactUtils = () => {
               config.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
             ]
           );
+        } else {
+          // set viewport to a reasonable size for laptops. I hope that is a sensible default.
+          await page.setViewport({width: 1440, height: 900});
         }
 
         await page.setRequestInterception(true);
