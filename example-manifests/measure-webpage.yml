@@ -12,8 +12,9 @@ initialize:
       method: WebpageImpact
       path: '@tngtech/if-webpage-plugins'
       config:
-        scrollToBottom: true
         url: https://www.tngtech.com
+        scrollToBottom: true
+        computeReloadRati: true
     'co2js':
       method: Co2js
       path: '@tngtech/if-webpage-plugins'

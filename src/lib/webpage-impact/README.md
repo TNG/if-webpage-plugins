@@ -16,6 +16,7 @@ The `WebpageImpact` plugin measures the weight of a webpage in bytes and the wei
 
 The follwing config parameters are optional:
 
+- `computeReloadRatio`: If true, a heuristic value for the `dataReloadRatio` is computed, which can be used as input for the co2js plugin. Any value for the `dataReloadRatio` that is provided as input will be overwritten. The data reload ratio expresses how much data has to be reloaded if the web page is visited a second time.
 - `mobileDevice:`: You can pick a mobile device to emulate. Must be one of puppeteer's known devices: https://pptr.dev/api/puppeteer.knowndevices
 - `emulateNetworkConditions`: You can pick one of puppeteer's predefined network conditions: https://pptr.dev/api/puppeteer.predefinednetworkconditions
 - `scrollToBottom`: If true, emulates a user scrolling to the bottom of the page (which loads all content that isn't loaded on initial load). If false, the page is not scrolled. Default: false.
@@ -28,8 +29,7 @@ The follwing config parameters are optional:
 
 - `network/data/bytes`: page weight in bytes
 - `network/data/resources/bytes`: resource weights by category in bytes
-- `dataReloadRatio`: an estimate of the percentage of data that is downloaded by return visitors (can be fed into the CO2.JS plugin)
-  if `options.dataReloadRatio` is already provided as an input, the plugin won't calculate it
+- `dataReloadRatio`: If `computeReloadRatio` is true: estimate of the amount of data that is reloaded on return visits (Can be fed into the co2js plugin.)
 - `timestamp`: set to the time of the plugin execution
 - `duration`: set to 0 (because the request time does not seem of particular interest here to the author)
 
@@ -72,6 +72,7 @@ initialize:
       path: '@tngtech/if-webpage-plugins'
       config:
         url: 'https://tngtech.com'
+        computeReloadRatio: true
 tree:
   children:
     child:
