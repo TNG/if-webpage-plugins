@@ -100,14 +100,8 @@ export const WebpageImpact = PluginFactory({
       inputs.map(async input => {
         const startTime = Date.now();
 
-        const computeReloadRatio = !input?.options?.dataReloadRatio;
-
         const {pageWeight, resourceTypeWeights, dataReloadRatio} =
-          await measurePageImpactMetrics(
-            config.url,
-            computeReloadRatio,
-            config
-          );
+          await measurePageImpactMetrics(config.url, config);
 
         const durationInSeconds = (Date.now() - startTime) / 1000;
 
@@ -118,7 +112,7 @@ export const WebpageImpact = PluginFactory({
           url: config.url,
           'network/data/bytes': pageWeight,
           'network/data/resources/bytes': resourceTypeWeights,
-          ...(dataReloadRatio
+          ...(config.computeReloadRatio && dataReloadRatio
             ? {
                 options: {
                   ...input.options,
@@ -135,7 +129,6 @@ export const WebpageImpact = PluginFactory({
 const WebpageImpactUtils = () => {
   const measurePageImpactMetrics = async (
     url: string,
-    computeReloadRatio: boolean,
     config?: ConfigParams
   ) => {
     const requestHandler = (interceptedRequest: HTTPRequest) => {
@@ -186,7 +179,7 @@ const WebpageImpactUtils = () => {
         });
 
         let reloadedResources: Resource[] | undefined;
-        if (computeReloadRatio) {
+        if (config?.computeReloadRatio) {
           reloadedResources = await loadPageResources(page, url, {
             reload: true,
             cacheEnabled: true,
@@ -377,6 +370,7 @@ const WebpageImpactUtils = () => {
     }
 
     const optionalConfigs = z.object({
+      computeReloadRatio: z.boolean().optional(),
       timeout: z.number().gte(0).optional(),
       mobileDevice: z.string().optional(),
       emulateNetworkConditions: z.string().optional(),
@@ -388,11 +382,6 @@ const WebpageImpactUtils = () => {
             .array(z.enum(ALLOWED_ENCODINGS))
             .or(z.string(z.enum(ALLOWED_ENCODINGS)))
             .optional(),
-        })
-        .optional(),
-      options: z
-        .object({
-          dataReloadRatio: z.number().optional(),
         })
         .optional(),
     });
