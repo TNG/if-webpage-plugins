@@ -14,7 +14,8 @@ initialize:
       config:
         url: https://www.tngtech.com
         scrollToBottom: true
-        computeReloadRati: true
+        computeReloadRatio: true
+        customUserInteraction: '/absolute/path/to/your/script.js'
     'co2js':
       method: Co2js
       path: '@tngtech/if-webpage-plugins'
