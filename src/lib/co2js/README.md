@@ -34,13 +34,11 @@ The value for `device`, `dataCenter`, or `networks` can be a number representing
 
 # IF Implementation
 
-IF utilizes the CO2JS Framework to calculate the carbon emissions of a website. The CO2JS Framework is a collection of plugins that calculate the carbon emissions of a website based on different parameters. IF installs the CO2js npm package from `@tgwf/co2js` and invokes its functions from a plugin plugin.
-
-The CO2JS Framework is a community plugin, not part of the IF standard library. This means the IF core team are not closely monitoring these plugins to keep them up to date. You should do your own research before implementing them!
+IF utilizes the CO2JS Framework to calculate the carbon emissions of a website. The CO2JS Framework is a collection of plugins that calculate the carbon emissions of a website based on different parameters. IF installs the CO2js npm package from `@tgwf/co2js` and invokes its functions from a plugin.
 
 ## Usage
 
-In IF the plugin is called from an `manifest`. An `manifest` is a `.yaml` file that contains configuration metadata and usage inputs. This is interpreted by the command line tool, `ie`.
+In IF the plugin is called from an `manifest`. An `manifest` is a `.yaml` file that defines a computation of impacts. This is interpreted by the command line tool, `if-run`.
 
 The plugin config should define a `type` supported by the CO2.JS library (either `swd` or `1byte`). These are different ways to calculate the operational carbon associated with a web application; `swd` is shorthand for 'sustainable web design' plugin and `1byte` refers to the OneByte mdoel. You can read about the details of these plugins and how they differ at the [Green Web Foundation website](https://developers.thegreenwebfoundation.org/co2js/explainer/methodologies-for-calculating-website-carbon/).
 
