@@ -98,3 +98,7 @@ tree:
             firstVisitPercentage: 0.9
             returnVisitPercentage: 0.1
 ```
+
+## License
+
+`if-webpage-plugins` is published under the Apache License 2.0. For more information concerning the license, see [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
