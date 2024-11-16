@@ -59,7 +59,7 @@
     "plugins",
     "unofficial"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./build/index.js",
   "publishConfig": {
     "access": "public"
