@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Green Software Foundation
 // SPDX-License-Identifier: MIT
 
+// modified from https://github.com/Green-Software-Foundation/if-unofficial-plugins
+
 import {Co2js} from '../../../../lib/co2js';
 
 import {ERRORS} from '@grnsft/if-core/utils';

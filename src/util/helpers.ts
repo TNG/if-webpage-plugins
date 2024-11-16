@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen, TNG
+// SPDX SPDX-License-Identifier: Apache-2.0
+
 import {PluginParams} from '@grnsft/if-core/types';
 
 export const addCurrentTimestampAndDurationIfMissing = (

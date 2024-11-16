@@ -1,11 +1,13 @@
-This Software contains code from [Lighthouse](https://github.com/GoogleChrome/lighthouse)
-in `src/lib/webpage-impact/index.ts`. The parts marked as originating from Lighthouse
-are distributed under Apache 2.0 License and with
+if-webpage-plugins
 
-Copyright 2016 Google LLC
+This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
+
+Copyright 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
+
+The respective code is distributed under Apache 2.0 license.
 
 
-This software contains code from [if-plugins](https://github.com/Green-Software-Foundation/if-plugins) and [if-unofficial-plugins](https://github.com/Green-Software-Foundation/if-unofficial-plugins) of the Green
+This product contains code from [if-plugins](https://github.com/Green-Software-Foundation/if-plugins) and [if-unofficial-plugins](https://github.com/Green-Software-Foundation/if-unofficial-plugins) of the Green
 Software Foundation. The respective source files are marked with a file notice. The code is distributed under
 MIT license with
 

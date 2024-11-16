@@ -1,5 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Green Software Foundation
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
 // SPDX-License-Identifier: MIT
+
+// modified from https://github.com/Green-Software-Foundation/if-unofficial-plugins
 
 import {co2} from '@tgwf/co2';
 import {z} from 'zod';
