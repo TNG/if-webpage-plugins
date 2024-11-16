@@ -38,8 +38,7 @@ initialize:
       method: ShellExecCommand
       path: '@tngtech/if-webpage-plugins'
       config:
-        exec-command:
-          command: 'echo "Hello, World!"'
+        command: 'echo "Hello, World!"'
 tree:
   children:
     child:
