@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
+// SPDX SPDX-License-Identifier: Apache-2.0
+
 import {hosting} from '@tgwf/co2';
 import {getDomain} from 'tldjs';
 import {z} from 'zod';

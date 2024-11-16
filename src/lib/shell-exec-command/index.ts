@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
+// SPDX SPDX-License-Identifier: Apache-2.0
+
 import {exec} from 'child_process';
 import {z} from 'zod';
 
