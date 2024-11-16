@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
+// SPDX SPDX-License-Identifier: Apache-2.0
+
 import http from 'http';
 import express, {Express} from 'express';
 import {WebpageImpact} from '../../../../lib';
