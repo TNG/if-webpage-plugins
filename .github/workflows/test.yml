@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 name: Test
-run-name: Unit tests of if-webpage-plugins
+run-name: Run unit tests for if-webpage-plugins
 
 on:
   push:
