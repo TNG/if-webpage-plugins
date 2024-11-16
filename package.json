@@ -12,7 +12,6 @@
   "dependencies": {
     "@grnsft/if-core": "^0.0.28",
     "@tgwf/co2": "^0.16.1",
-    "lighthouse": "^11.7.0",
     "puppeteer": "^22.2.0",
     "tldjs": "^2.3.1",
     "typescript": "^5.1.6",
