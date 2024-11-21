@@ -24,6 +24,7 @@ The follwing config parameters are optional:
 - `headers`:
   - `accept`: string https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
   - `accept-encoding`: array of allowed encodings (a single encoding can also be passed as a string) https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
+- `username`: The plugin supports simple logins with username and password. Provide the username if the page you want to measure requires such a login. The password needs to be stored in a shell environment variable called `WI_PASSWORD`. Please note, that the login may fail nevertheless because the plugin expects a certain interface that may not be provided by your page.
 
 ### Returns
 
