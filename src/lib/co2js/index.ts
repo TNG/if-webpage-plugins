@@ -41,7 +41,7 @@ export const Co2js = PluginFactory({
       return result
         ? {
             ...input,
-            'carbon-operational': result,
+            'carbon-operational': roundToDecimalPlaces(result, 3),
           }
         : input;
     });
@@ -148,21 +148,21 @@ const Co2jsUtils = () => {
    */
   const calculateResultByParams = (
     inputWithConfig: PluginParams,
-    model: any,
+    model: co2,
   ) => {
     const greenhosting = inputWithConfig['green-web-host'] === true;
     const options = inputWithConfig['options'];
     const GBinBytes = inputWithConfig['network/data'] * 1000 * 1000 * 1000;
     const bytes = inputWithConfig['network/data/bytes'] || GBinBytes;
 
-    const paramType: {[key: string]: () => string} = {
+    const paramType: {[key: string]: () => number} = {
       swd: () => {
         return options
-          ? model.perVisitTrace(bytes, greenhosting, options).co2
-          : model.perVisit(bytes, greenhosting);
+          ? (model.perVisitTrace(bytes, greenhosting, options).co2 as number)
+          : (model.perVisit(bytes, greenhosting) as number);
       },
       '1byte': () => {
-        return model.perByte(bytes, greenhosting);
+        return model.perByte(bytes, greenhosting) as number;
       },
     };
 
@@ -174,4 +174,9 @@ const Co2jsUtils = () => {
     validateInput,
     calculateResultByParams,
   };
+};
+
+const roundToDecimalPlaces = (num: number, decimalPlaces: number) => {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor) / factor;
 };
