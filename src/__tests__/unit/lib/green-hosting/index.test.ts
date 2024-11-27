@@ -20,7 +20,7 @@ describe('lib/green-hosting', () => {
     describe('execute():', () => {
       it.each([[true], [false]])(
         'outputs the correct result if green hosting is %s',
-        checkValue => {
+        async checkValue => {
           const inputs = [
             {
               timestamp: '2020-01-01T00:00:00Z',
@@ -32,7 +32,8 @@ describe('lib/green-hosting', () => {
           jest.spyOn(hosting, 'check').mockImplementation(() => checkValue);
 
           const {execute} = GreenHosting(undefined, {}, {});
-          expect(execute(inputs)).resolves.toEqual([
+          const actual_result = await execute(inputs);
+          expect(actual_result).toEqual([
             {
               timestamp: '2020-01-01T00:00:00Z',
               duration: 3600,
@@ -40,10 +41,10 @@ describe('lib/green-hosting', () => {
               'green-web-host': checkValue,
             },
           ]);
-        }
+        },
       );
 
-      it('outputs undefined if the domain is not valid', () => {
+      it('outputs undefined if the domain is not valid', async () => {
         const inputs = [
           {
             timestamp: '2020-01-01T00:00:00Z',
@@ -53,7 +54,8 @@ describe('lib/green-hosting', () => {
         ];
 
         const {execute} = GreenHosting(undefined, {}, {});
-        expect(execute(inputs)).resolves.toEqual([
+        const actual_result = await execute(inputs);
+        expect(actual_result).toEqual([
           {
             timestamp: '2020-01-01T00:00:00Z',
             duration: 3600,
@@ -63,7 +65,7 @@ describe('lib/green-hosting', () => {
         ]);
       });
 
-      it('adds timestamp and duration if both are missing', () => {
+      it('adds timestamp and duration if both are missing', async () => {
         const timestamp = 1609459200000;
         const timestampISO = new Date(timestamp).toISOString();
 
@@ -76,7 +78,8 @@ describe('lib/green-hosting', () => {
         ];
 
         const {execute} = GreenHosting(undefined, {}, {});
-        expect(execute(inputs)).resolves.toEqual([
+        const actual_result = await execute(inputs);
+        expect(actual_result).toEqual([
           {
             timestamp: timestampISO,
             duration: 0,

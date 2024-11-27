@@ -42,6 +42,7 @@ export const TimerStop = PluginFactory({
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   inputValidation: (input: PluginParams | undefined, _config: ConfigParams) => {
     const schema = z.object({
       resets: z
@@ -54,6 +55,7 @@ export const TimerStop = PluginFactory({
 
     return validate<z.infer<typeof schema>>(schema, input);
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   implementation: async (inputs: PluginParams[], _config: ConfigParams) => {
     return inputs.map(input => {
       const {resets, 'timer/start': startTimeISOString} = input;

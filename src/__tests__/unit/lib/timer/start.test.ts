@@ -54,7 +54,7 @@ describe('lib/timer', () => {
 
         const {execute} = TimerStart(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
-          TIMER.ERROR_MESSAGE_EXISTING_START
+          TIMER.ERROR_MESSAGE_EXISTING_START,
         );
       });
     });

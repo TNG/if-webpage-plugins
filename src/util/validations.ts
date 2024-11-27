@@ -13,7 +13,7 @@ const {InputValidationError} = ERRORS;
  * At least one property defined handler.
  */
 export const atLeastOneDefined = (
-  obj: Record<string | number | symbol, unknown>
+  obj: Record<string | number | symbol, unknown>,
 ) => Object.values(obj).some(v => v !== undefined);
 
 /**
@@ -52,7 +52,7 @@ const prettifyErrorMessage = (issues: string) => {
  */
 const flattenPath = (path: (string | number)[]): string => {
   const flattenPath = path.map(part =>
-    typeof part === 'number' ? `[${part}]` : part
+    typeof part === 'number' ? `[${part}]` : part,
   );
   return flattenPath.join('.');
 };
@@ -65,7 +65,7 @@ export const validate = <T>(schema: ZodSchema<T>, object: any) => {
 
   if (!validationResult.success) {
     throw new InputValidationError(
-      prettifyErrorMessage(validationResult.error.message)
+      prettifyErrorMessage(validationResult.error.message),
     );
   }
 

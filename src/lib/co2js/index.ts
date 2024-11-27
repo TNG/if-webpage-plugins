@@ -20,7 +20,8 @@ const {MISSING_CONFIG} = STRINGS;
 export const Co2js = PluginFactory({
   configValidation: (
     config: ConfigParams,
-    _input: PluginParams | undefined
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _input: PluginParams | undefined,
   ) => {
     const {validateConfig} = Co2jsUtils();
     return validateConfig(config);
@@ -79,7 +80,7 @@ const Co2jsUtils = () => {
         },
         {
           message: '`version` can only be provided with `type` swd',
-        }
+        },
       );
 
     return validate<z.infer<typeof schema>>(schema, config);
@@ -128,7 +129,7 @@ const Co2jsUtils = () => {
           data['green-web-host'] !== undefined,
         {
           message: `\`green-web-host\` is provided neither in config nor in input.\nConfig: ${config}\nInput: ${input}`,
-        }
+        },
       )
       .refine(
         data =>
@@ -136,7 +137,7 @@ const Co2jsUtils = () => {
           data['green-web-host'] === undefined,
         {
           message: `\`green-web-host\` is provided in config and in input. Please only provide once.\nConfig: ${config}\nInput: ${input}`,
-        }
+        },
       );
 
     return validate<z.infer<typeof inputSchema>>(inputSchema, input);
@@ -147,7 +148,7 @@ const Co2jsUtils = () => {
    */
   const calculateResultByParams = (
     inputWithConfig: PluginParams,
-    model: any
+    model: any,
   ) => {
     const greenhosting = inputWithConfig['green-web-host'] === true;
     const options = inputWithConfig['options'];

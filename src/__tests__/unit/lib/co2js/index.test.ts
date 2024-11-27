@@ -321,8 +321,8 @@ describe('lib/co2js: ', () => {
         } catch (error) {
           expect(error).toEqual(
             new InputValidationError(
-              'Either `network/data/bytes` or `network/data` should be provided in the input.'
-            )
+              'Either `network/data/bytes` or `network/data` should be provided in the input.',
+            ),
           );
           expect(error).toBeInstanceOf(InputValidationError);
         }
@@ -345,8 +345,8 @@ describe('lib/co2js: ', () => {
         } catch (error) {
           expect(error).toEqual(
             new InputValidationError(
-              '`version` can only be provided with `type` swd'
-            )
+              '`version` can only be provided with `type` swd',
+            ),
           );
           expect(error).toBeInstanceOf(InputValidationError);
         }
