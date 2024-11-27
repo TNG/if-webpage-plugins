@@ -79,7 +79,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.023195833333333332,
+            'carbon-operational': 0.023,
           },
         ]);
       });
@@ -131,7 +131,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data': 10,
             'green-web-host': true,
-            'carbon-operational': 2319.583333333333,
+            'carbon-operational': 2319.583,
           },
         ]);
       });
@@ -157,7 +157,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': false,
-            'carbon-operational': 0.029081299999999994,
+            'carbon-operational': 0.029,
           },
         ]);
       });
@@ -186,7 +186,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.0254956723875,
+            'carbon-operational': 0.025,
           },
         ]);
       });
@@ -215,7 +215,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.012103000000000001,
+            'carbon-operational': 0.012,
           },
         ]);
       });
@@ -246,7 +246,7 @@ describe('lib/co2js: ', () => {
             timestamp: '2021-01-01T00:00:00Z',
             duration: 3600,
             'network/data/bytes': 100000,
-            'carbon-operational': 0.037453104,
+            'carbon-operational': 0.037,
             'green-web-host': false,
             options: {
               dataReloadRatio: 0.6,
