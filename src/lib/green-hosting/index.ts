@@ -32,8 +32,10 @@ export const GreenHosting = PluginFactory({
   },
   inputValidation: (
     input: PluginParams,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _config: ConfigParams,
-    _index: number | undefined
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _index: number | undefined,
   ) => {
     const schema = z
       .object({
@@ -43,13 +45,14 @@ export const GreenHosting = PluginFactory({
 
     return validate<z.infer<typeof schema>>(schema, input);
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   implementation: async (inputs: PluginParams[], _config: ConfigParams) => {
     return await Promise.all(
       inputs.map(async input => {
         const domain = getDomain(input.url);
         if (domain === null) {
           console.warn(
-            `GreenHosting: Could not extract domain from url ${input.url}`
+            `GreenHosting: Could not extract domain from url ${input.url}`,
           );
         }
         input = addCurrentTimestampAndDurationIfMissing(input, 0); // We are making a web request. No need to know how long we waited.
@@ -57,7 +60,7 @@ export const GreenHosting = PluginFactory({
           ...input,
           'green-web-host': domain ? await hosting.check(domain) : undefined,
         };
-      })
+      }),
     );
   },
 });

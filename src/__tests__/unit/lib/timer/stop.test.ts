@@ -77,7 +77,7 @@ describe('lib/timer', () => {
 
         const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
-          TIMER.ERROR_MESSAGE_MISSING_START.toLowerCase()
+          TIMER.ERROR_MESSAGE_MISSING_START.toLowerCase(),
         );
       });
 
@@ -92,7 +92,7 @@ describe('lib/timer', () => {
 
         const {execute} = TimerStop(undefined, {}, {});
         await expect(execute(inputs)).rejects.toThrow(
-          TIMER.ERROR_MESSAGE_RESETS.toLowerCase()
+          TIMER.ERROR_MESSAGE_RESETS.toLowerCase(),
         );
       });
     });

@@ -20,11 +20,12 @@ export const TimerStart = PluginFactory({
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   implementation: async (inputs: PluginParams[], _config: ConfigParams) => {
     return inputs.map(input => {
       if (input['timer/start']) {
         throw new InputValidationError(
-          `TimerStart: ${TIMER.ERROR_MESSAGE_EXISTING_START}`
+          `TimerStart: ${TIMER.ERROR_MESSAGE_EXISTING_START}`,
         );
       }
       const startTime = new Date(Date.now()).toISOString();

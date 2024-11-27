@@ -25,7 +25,8 @@ export const ShellExecCommand = PluginFactory({
   },
   configValidation: (
     config: ConfigParams,
-    _input: PluginParams | undefined
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _input: PluginParams | undefined,
   ) => {
     const schema = z.object({
       command: z.string(),
@@ -46,14 +47,14 @@ export const ShellExecCommand = PluginFactory({
           const durationInSeconds = (Date.now() - start) / 1000;
           input = addCurrentTimestampAndDurationIfMissing(
             input,
-            durationInSeconds
+            durationInSeconds,
           );
           return {...input, stdout: stdout.trim()};
         } catch (error) {
           console.error(`Error running the command: ${error}`); // the promisfied version rejects the promise if return code != 0
           return input;
         }
-      })
+      }),
     );
   },
 });

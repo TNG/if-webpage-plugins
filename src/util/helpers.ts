@@ -5,7 +5,7 @@ import {PluginParams} from '@grnsft/if-core/types';
 
 export const addCurrentTimestampAndDurationIfMissing = (
   input: PluginParams,
-  duration: number
+  duration: number,
 ) => {
   if (input.timestamp === undefined && input.duration === undefined) {
     input = {

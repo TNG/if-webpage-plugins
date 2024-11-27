@@ -4,5 +4,8 @@
     "@typescript-eslint/no-explicit-any": [
       "off"
     ]
+  },
+  "parserOptions": {
+    "project": "./tsconfig.test.json"
   }
 }

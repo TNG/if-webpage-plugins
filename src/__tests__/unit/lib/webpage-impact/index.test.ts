@@ -96,7 +96,7 @@ describe('lib/webpage-impact', () => {
         const webpageImpact = WebpageImpact(
           {url: 'http://localhost:3000', computeReloadRatio: true},
           {},
-          {}
+          {},
         );
 
         const testFirstVisitPercentage = 0.9;
@@ -120,25 +120,25 @@ describe('lib/webpage-impact', () => {
         expect(data['network/data/bytes']).toBeGreaterThanOrEqual(2000);
         expect(data['network/data/bytes']).toBeLessThanOrEqual(2200);
         expect(
-          data['network/data/resources/bytes']['Document']
+          data['network/data/resources/bytes']['Document'],
         ).toBeGreaterThanOrEqual(800);
         expect(
-          data['network/data/resources/bytes']['Document']
+          data['network/data/resources/bytes']['Document'],
         ).toBeLessThanOrEqual(850);
         expect(
-          data['network/data/resources/bytes']['Fetch']
+          data['network/data/resources/bytes']['Fetch'],
         ).toBeGreaterThanOrEqual(800);
         expect(
-          data['network/data/resources/bytes']['Fetch']
+          data['network/data/resources/bytes']['Fetch'],
         ).toBeLessThanOrEqual(850);
         expect(data['network/data/resources/bytes']['Other']).toEqual(422);
         expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.45);
         expect(data.options.dataReloadRatio).toBeLessThanOrEqual(0.5);
         expect(data.options.firstVisitPercentage).toEqual(
-          testFirstVisitPercentage
+          testFirstVisitPercentage,
         );
         expect(data.options.returnVisitPercentage).toEqual(
-          testReturnVisitPercentage
+          testReturnVisitPercentage,
         );
       }, 10000);
     });

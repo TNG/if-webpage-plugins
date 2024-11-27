@@ -83,7 +83,8 @@ export const WebpageImpact = PluginFactory({
   },
   configValidation: (
     config: ConfigParams,
-    _input: PluginParams | undefined
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _input: PluginParams | undefined,
   ) => {
     const {validateConfig} = WebpageImpactUtils();
 
@@ -121,7 +122,7 @@ export const WebpageImpact = PluginFactory({
               }
             : {}),
         };
-      })
+      }),
     );
   },
 });
@@ -129,9 +130,9 @@ export const WebpageImpact = PluginFactory({
 const WebpageImpactUtils = () => {
   const measurePageImpactMetrics = async (
     url: string,
-    config?: ConfigParams
+    config?: ConfigParams,
   ) => {
-    const requestHandler = (interceptedRequest: HTTPRequest) => {
+    const requestHandler = async (interceptedRequest: HTTPRequest) => {
       const headers = Object.assign({}, interceptedRequest.headers(), {
         ...(config?.headers?.accept && {
           accept: `${config.headers.accept}`,
@@ -144,7 +145,7 @@ const WebpageImpactUtils = () => {
           }`,
         }),
       });
-      interceptedRequest.continue({headers});
+      await interceptedRequest.continue({headers});
     };
 
     try {
@@ -162,7 +163,7 @@ const WebpageImpactUtils = () => {
           await page.emulateNetworkConditions(
             PredefinedNetworkConditions[
               config.emulateNetworkConditions as keyof typeof PredefinedNetworkConditions
-            ]
+            ],
           );
         } else {
           // set viewport to a reasonable size for laptops. I hope that is a sensible default.
@@ -195,7 +196,7 @@ const WebpageImpactUtils = () => {
       }
     } catch (error) {
       throw new Error(
-        `${LOGGER_PREFIX}: Error during measurement of webpage impact metrics: ${error}`
+        `${LOGGER_PREFIX}: Error during measurement of webpage impact metrics: ${error}`,
       );
     }
   };
@@ -203,7 +204,7 @@ const WebpageImpactUtils = () => {
   const loadPageResources = async (
     page: Page,
     url: string,
-    {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions
+    {reload, cacheEnabled, scrollToBottom}: WebpageImpactOptions,
   ): Promise<Resource[]> => {
     try {
       await page.setCacheEnabled(cacheEnabled);
@@ -269,21 +270,21 @@ const WebpageImpactUtils = () => {
       return mergeCdpData(cdpResponses, cdpTransferSizes);
     } catch (error) {
       throw new Error(
-        `${LOGGER_PREFIX}: Error while loading webpage: ${error}`
+        `${LOGGER_PREFIX}: Error while loading webpage: ${error}`,
       );
     }
   };
 
   const mergeCdpData = (
     cdpResponses: Record<string, ResourceBase>,
-    cdpTransferSizes: Record<string, {transferSize: number}>
+    cdpTransferSizes: Record<string, {transferSize: number}>,
   ): Resource[] => {
     const pageResources: Resource[] = [];
     for (const [requestId, response] of Object.entries(cdpResponses)) {
       const transferSize = cdpTransferSizes[requestId]?.transferSize;
       if (transferSize === undefined) {
         console.debug(
-          `${LOGGER_PREFIX}: No transfer size found for resource ${response.url}, status: ${response.status}`
+          `${LOGGER_PREFIX}: No transfer size found for resource ${response.url}, status: ${response.status}`,
         );
       }
       pageResources.push({
@@ -313,7 +314,7 @@ const WebpageImpactUtils = () => {
 
   const computeMetrics = (
     initialResources: Resource[],
-    reloadResources: Resource[] | undefined
+    reloadResources: Resource[] | undefined,
   ) => {
     const resourceTypeWeights = initialResources.reduce(
       (acc, resource) => {
@@ -324,11 +325,11 @@ const WebpageImpactUtils = () => {
         }
         return acc;
       },
-      {} as Record<Protocol.Network.ResourceType, number>
+      {} as Record<Protocol.Network.ResourceType, number>,
     );
     const initialPageWeight = Object.values(resourceTypeWeights).reduce(
       (acc, resourceTypeSize) => acc + resourceTypeSize,
-      0
+      0,
     );
 
     // dataReloadRatio: this is an attempt to get a heuristic value
@@ -341,14 +342,14 @@ const WebpageImpactUtils = () => {
     if (reloadResources !== undefined) {
       const reloadPageWeight = reloadResources.reduce(
         (acc, resource) => acc + resource.transferSize,
-        0
+        0,
       );
 
       const fromCache = initialPageWeight - reloadPageWeight;
 
       dataReloadRatio = roundToDecimalPlaces(
         (initialPageWeight - fromCache) / initialPageWeight,
-        2
+        2,
       );
     }
 
@@ -400,9 +401,9 @@ const WebpageImpactUtils = () => {
         },
         {
           message: `Mobile device must be one of: ${Object.keys(
-            KnownDevices
+            KnownDevices,
           ).join(', ')}.`,
-        }
+        },
       )
       .refine(
         data => {
@@ -414,9 +415,9 @@ const WebpageImpactUtils = () => {
         },
         {
           message: `Network condition must be one of: ${Object.keys(
-            PredefinedNetworkConditions
+            PredefinedNetworkConditions,
           ).join(', ')}.`,
-        }
+        },
       );
 
     return validate<z.infer<typeof configSchema>>(configSchema, config);
