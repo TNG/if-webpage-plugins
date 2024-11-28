@@ -1,0 +1,19 @@
+name: green-hosting-demo
+description: example manifest invoking green-hosting plugin
+tags:
+initialize:
+  outputs:
+    - yaml
+  plugins:
+    'green-hosting':
+      method: GreenHosting
+      path: '@tngtech/if-webpage-plugins'
+tree:
+  children:
+    child:
+      pipeline:
+        compute:
+          - green-hosting
+      inputs:
+        - url: www.thegreenwebfoundation.org
+        - url: www.tngtech.com

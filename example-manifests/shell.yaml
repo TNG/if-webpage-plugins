@@ -1,0 +1,19 @@
+name: exec-shell-command-demo
+description: example manifest invoking exec-shell-command
+tags:
+initialize:
+  outputs:
+    - yaml
+  plugins:
+    exec-command:
+      method: ShellExecCommand
+      path: '@tngtech/if-webpage-plugins'
+      config:
+        command: 'echo "Hello, World!"'
+tree:
+  children:
+    child:
+      pipeline:
+        compute:
+          - exec-command
+      inputs:

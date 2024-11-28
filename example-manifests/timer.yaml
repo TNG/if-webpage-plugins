@@ -1,0 +1,30 @@
+name: timer-demo
+description: example manifest invoking timer plugins
+tags:
+initialize:
+  outputs:
+    - yaml
+  plugins:
+    timer-start:
+      method: TimerStart
+      path: '@tngtech/if-webpage-plugins'
+    timer-stop:
+      method: TimerStop
+      path: '@tngtech/if-webpage-plugins'
+    exec-command:
+      method: ShellExecCommand
+      path: '@tngtech/if-webpage-plugins'
+      config:
+        command: 'sleep 10'
+tree:
+  children:
+    child:
+      pipeline:
+        compute:
+          - timer-start
+          - exec-command
+          - timer-stop
+      inputs:
+        - timestamp: 2024-02-25T00:00 # some placeholder timestamp that will be substituted by timer-start
+          duration: 1 # if reset = true this will be overwritten, otherwise it will be added to
+          resets: [true]
