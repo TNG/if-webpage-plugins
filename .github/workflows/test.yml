@@ -14,7 +14,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04 # setting to 22.04 due to AppArmor restrictions that block Chromium on 24.04
+    runs-on: ubuntu-24.04 # setting to 22.04 due to AppArmor restrictions that block Chromium on 24.04
     steps:
       - uses: actions/checkout@v4
 
