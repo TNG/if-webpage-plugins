@@ -1,0 +1,41 @@
+name: Create Version Bump PR
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'You have to provide a version (e.g. 0.14.1)'
+        type: string
+        required: true
+      branch:
+        description: 'You can provide the branch name on which the version bump commit is created (defaults to main)'
+        default: 'main'
+        type: string
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      BRANCH: 'bump-version-${{ github.event.inputs.version }}'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - name: Create Version Bump Commit
+        run: |
+          ./scripts/bump_version.sh ${{ github.event.inputs.version }} "${BRANCH}" false
+      - name: Create Version Bump PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          committer: ${{ github.actor }} <github-actions[bot]@users.noreply.github.com>
+          commit-message: 'Bump version to ${{ github.event.inputs.version }}'
+          title: 'Bump version to ${{ github.event.inputs.version }}'
+          body: 'This PR bumps the version to ${{ github.event.inputs.version }}'
+          branch: '${BRANCH}'
+          base: ${{ github.event.inputs.branch }}
+          labels: 'version-bump'
+          assignees: 'alexzurbonsen'
+          signoff: true
+          branch-suffix: 'bump-version-${{ github.event.inputs.version }}'
+          delete-branch: true
