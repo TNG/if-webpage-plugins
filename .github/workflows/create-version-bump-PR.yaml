@@ -24,7 +24,7 @@ jobs:
           ref: ${{ github.event.inputs.base }}
       - name: Create Version Bump Commit
         run: |
-          ./scripts/bump_version.sh ${{ github.event.inputs.version }} "${BRANCH}"
+          ./scripts/bump_version.sh ${{ github.event.inputs.version }}
       - name: Create Version Bump PR
         uses: peter-evans/create-pull-request@v7
         with:
