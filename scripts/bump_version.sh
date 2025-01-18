@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# This script bumps the version in the package.json.
+# This script bumps the package version and creates a commit if a branch name is provided.
 # Arguments:
-#   $1: (required) version to bump to in the format vX.Y.Z
+#   $1: (required) version to bump to in the format X.Y.Z
 #   $2: (optional) branch name to create a commit on. If not provided, no commit is created.
 
 set -euf -o pipefail
@@ -25,22 +25,16 @@ else
   exit 2
 fi
 
-VERSION_FORMAT='^v([0-9]+\.){2}([0-9]+)$'
+VERSION_FORMAT='^([0-9]+\.){2}([0-9]+)$'
 if [[ ! $1 =~ $VERSION_FORMAT ]]; then
-  echo "Invalid version format! Version should be in format vX.Y.Z"
+  echo "Invalid version format! Version should be in format X.Y.Z"
   exit 22
 fi
 
 VERSION=$1
-SCRIPT_LOCATION=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
-PACKAGE_JSON="${SCRIPT_LOCATION}/../package.json"
-PACKAGE_LOCK="${SCRIPT_LOCATION}/../package-lock.json"
 
 echo -e "${VIOLET}Bump version to ${VERSION}.${NC}"
-
-jq ".version = \"${VERSION}\"" "${PACKAGE_JSON}" > "${PACKAGE_JSON}.tmp"
-mv "${PACKAGE_JSON}.tmp" "${PACKAGE_JSON}"
-rm -f "${PACKAGE_JSON}.tmp"
+npm version "${VERSION}" --no-git-tag-version
 
 echo
 echo -e "${VIOLET}Install to update package lock file${NC}"
