@@ -46,8 +46,7 @@ if [[ "${CREATE_COMMIT}" == "true" ]]; then
   echo -e "${VIOLET}Creating a commit${NC}"
 
   git switch -c "${BRANCH}"
-  git add "${PACKAGE_JSON}"
-  git add "${PACKAGE_LOCK}"
+  git add .
   git commit -s -m "Automatic commit: Bump version to ${VERSION}"
 
   echo
