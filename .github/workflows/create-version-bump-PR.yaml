@@ -3,10 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'You have to provide a version (e.g. 0.14.1)'
+        description: 'You have to provide a version (e.g. 1.1.2)'
         type: string
         required: true
-      branch:
+      base:
         description: 'You can provide the branch name on which the version bump commit is created (defaults to main)'
         default: 'main'
         type: string
@@ -21,10 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.event.inputs.base }}
       - name: Create Version Bump Commit
         run: |
-          ./scripts/bump_version.sh ${{ github.event.inputs.version }} "${BRANCH}" false
+          ./scripts/bump_version.sh ${{ github.event.inputs.version }} "${BRANCH}"
       - name: Create Version Bump PR
         uses: peter-evans/create-pull-request@v7
         with:
@@ -33,7 +33,7 @@ jobs:
           title: 'Bump version to ${{ github.event.inputs.version }}'
           body: 'This PR bumps the version to ${{ github.event.inputs.version }}'
           branch: '${BRANCH}'
-          base: ${{ github.event.inputs.branch }}
+          base: ${{ github.event.inputs.base }}
           labels: 'version-bump'
           assignees: 'alexzurbonsen'
           signoff: true
