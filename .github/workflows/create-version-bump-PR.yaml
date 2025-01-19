@@ -37,5 +37,3 @@ jobs:
           labels: 'version-bump'
           assignees: 'alexzurbonsen'
           signoff: true
-          branch-suffix: 'bump-version-${{ github.event.inputs.version }}'
-          delete-branch: true
