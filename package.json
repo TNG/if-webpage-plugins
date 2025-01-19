@@ -62,7 +62,7 @@
     "access": "public"
   },
   "repository": {
-    "url": "https://github.com/TNG/if-webpage-plugins.git"
+    "url": "git+https://github.com/TNG/if-webpage-plugins.git"
   },
   "scripts": {
     "build": "rm -rf build && tsc --project tsconfig.json",
