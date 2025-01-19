@@ -7,6 +7,8 @@ if [[ $# -ne 1 ]]; then
   exit 2
 fi
 
+# publishing requires an NPM access token, that is stored in an
+# environment variable with the same name as the one required in .npmrc
 NPM_ACCESS_TOKEN=$1
 VERSION=$(npm pkg get version)
 
@@ -16,31 +18,22 @@ NC='\033[0m'
 
 echo -e "${VIOLET}Starting release process for if-webpage-plugins version "${VERSION}" to NPM${NC}"
 
-echo
-echo -e "${VIOLET}Installing package${NC}"
+echo -e "\n${VIOLET}Installing package${NC}"
 npm install
 
-echo
-echo -e "${VIOLET}Running tests${NC}"
+echo -e "\n${VIOLET}Running tests${NC}"
 npm run test
 
-echo
 echo -e "${VIOLET}Building package${NC}"
 npm run build
 
-echo
-echo -e "${VIOLET}Building successful${NC}"
+echo -e "\n${VIOLET}Building successful${NC}"
 
-echo
-echo -e "${VIOLET}Create version tag${NC}"
+echo -e "\n${VIOLET}Create version tag${NC}"
 git tag -a ${VERSION} -m "Release version ${VERSION}"
-git push --tags
+# git push --tags
 
-echo
-echo -e "${VIOLET}Publishing package${NC}"
-# requires an access token, that is stored in an
-# environment variable with the same name as the on required in .npmrc
+echo -e "\n${VIOLET}Publishing package${NC}"
 # npm publish --access public
 
-echo
-echo -e "${VIOLET}Publishing successful${NC}"
+echo -e "\n${VIOLET}Publishing successful${NC}"

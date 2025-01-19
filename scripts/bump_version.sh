@@ -36,21 +36,17 @@ VERSION=$1
 echo -e "${VIOLET}Bump version to ${VERSION}.${NC}"
 npm version "${VERSION}" --no-git-tag-version
 
-echo
-echo -e "${VIOLET}Install to update package lock file${NC}"
+echo -e "\n${VIOLET}Install to update package lock file${NC}"
 npm install
 
-echo
-
 if [[ "${CREATE_COMMIT}" == "true" ]]; then
-  echo -e "${VIOLET}Creating a commit${NC}"
+  echo -e "\n${VIOLET}Creating a commit${NC}"
 
   git switch -c "${BRANCH}"
   git add .
   git commit -s -m "Automatic commit: Bump version to ${VERSION}"
 
-  echo
-  echo -e "${VIOLET}Successfully created commit on branch ${BRANCH}${NC}"
+  echo -e "\n${VIOLET}Successfully created commit on branch ${BRANCH}${NC}"
 else
-  echo -e "${VIOLET}Skipping commit creation. Done${NC}"
+  echo -e "\n${VIOLET}Skipping commit creation. Done${NC}"
 fi
