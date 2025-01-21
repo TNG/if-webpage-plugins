@@ -31,9 +31,9 @@ echo -e "\n${VIOLET}Building successful${NC}"
 
 echo -e "\n${VIOLET}Create version tag${NC}"
 git tag -a ${VERSION} -m "Release version ${VERSION}"
-# git push --tags
+git push --tags
 
 echo -e "\n${VIOLET}Publishing package${NC}"
-# npm publish --access public
+npm publish --access public
 
 echo -e "\n${VIOLET}Publishing successful${NC}"
