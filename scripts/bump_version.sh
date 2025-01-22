@@ -17,7 +17,7 @@ if [[ $# -eq 1 ]]; then
   CREATE_COMMIT="false"
   echo "No branch name provided. Won't create a commit."
 elif [[ $# -eq 2 ]]; then
-  BRANCH=$2
+  BRANCH="$2"
   CREATE_COMMIT="true"
   echo "Branch name provided. Creating a commit."
 else
@@ -26,12 +26,12 @@ else
 fi
 
 VERSION_FORMAT='^([0-9]+\.){2}([0-9]+)$'
-if [[ ! $1 =~ $VERSION_FORMAT ]]; then
+if [[ ! "$1" =~ $VERSION_FORMAT ]]; then
   echo "Invalid version format! Version should be in format X.Y.Z"
   exit 22
 fi
 
-VERSION=$1
+VERSION="$1"
 
 echo -e "${VIOLET}Bump version to ${VERSION}.${NC}"
 npm version "${VERSION}" --no-git-tag-version

@@ -9,7 +9,7 @@ fi
 
 # publishing requires an NPM access token, that is stored in an
 # environment variable with the same name as the one required in .npmrc
-NPM_ACCESS_TOKEN=$1
+NPM_ACCESS_TOKEN="$1"
 VERSION=$(npm pkg get version)
 
 # for prettier printing
@@ -30,7 +30,7 @@ npm run build
 echo -e "\n${VIOLET}Building successful${NC}"
 
 echo -e "\n${VIOLET}Create version tag${NC}"
-git tag -a ${VERSION} -m "Release version ${VERSION}"
+git tag -a "v${VERSION}" -m "Release version ${VERSION}"
 git push --tags
 
 echo -e "\n${VIOLET}Publishing package${NC}"
