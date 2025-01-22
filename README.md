@@ -40,20 +40,11 @@ For further info on the plugins, see their README files.
 
 ## Installation
 
-The plugin is not yet published to npm. You can install it by cloning this repository
+For usage with the Impact Framework cli install globally with
 
-```bash
-git clone https://github.com/TNG/if-webpage-plugins.git
+```sh
+npm install -g @tngtech/if-webpage-plugins
 ```
-
-and running
-
-```bash
-npm install
-npm link
-```
-
-in the root directory. (If husky fails with a permission error, executing `chmod +x ./node_modules/husky/lib/bin.js`, also from the root directory, will probably help.)
 
 ## Example Usage (manifest file)
 
