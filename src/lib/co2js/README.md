@@ -144,7 +144,7 @@ tree:
               device: 560.98
               dataCenter:
                 country: TWN
-          carbon-operational: 0.119
+          estimated-carbon: 0.119
 ```
 
 ## TypeScript
