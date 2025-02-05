@@ -30,7 +30,7 @@ The value for `device`, `dataCenter`, or `networks` can be a number representing
 
 ## Returns
 
-- `carbon-operational`: carbon emissions from the operation of the website, in grams of CO2e
+- `estimated-carbon`: carbon emissions from the operation of the website, in grams of CO2e
 
 # IF Implementation
 
@@ -87,7 +87,7 @@ You can run this by passing it to `if-run`. To compute the manifest file, first 
 
 ```sh
 npm i -g @grnsft/if
-npm i -g @tngtech/if-webpage-plugin
+npm i -g @tngtech/if-webpage-plugins
 ```
 
 Then, use the following command run from the project root to compute the manifest:
@@ -144,7 +144,7 @@ tree:
               device: 560.98
               dataCenter:
                 country: TWN
-          carbon-operational: 0.11880509600000001
+          carbon-operational: 0.119
 ```
 
 ## TypeScript
