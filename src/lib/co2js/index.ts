@@ -41,7 +41,7 @@ export const Co2js = PluginFactory({
       return result
         ? {
             ...input,
-            'carbon-operational': roundToDecimalPlaces(result, 3),
+            'estimated-carbon': roundToDecimalPlaces(result, 3),
           }
         : input;
     });
