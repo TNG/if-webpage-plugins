@@ -32,7 +32,7 @@ jobs:
           commit-message: 'Bump version to ${{ github.event.inputs.version }}'
           title: 'Bump version to ${{ github.event.inputs.version }}'
           body: 'This PR bumps the version to ${{ github.event.inputs.version }}'
-          branch: '${BRANCH}'
+          branch: 'bump-version-${{ github.event.inputs.version }}'
           base: ${{ github.event.inputs.base }}
           labels: 'version-bump'
           assignees: 'alexzurbonsen'
