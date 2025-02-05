@@ -10,7 +10,7 @@ fi
 # publishing requires an NPM access token, that is stored in an
 # environment variable with the same name as the one required in .npmrc
 NPM_ACCESS_TOKEN="$1"
-VERSION=$(npm pkg get version)
+VERSION=$(npm pkg get version | jq -r)
 
 # for prettier printing
 VIOLET='\033[0;35m'
