@@ -10,10 +10,10 @@ import {ERRORS} from '@grnsft/if-core/utils';
 const {ConfigError, InputValidationError} = ERRORS;
 
 /**
- * Disclaimer: the tests relying on carbon-operational values are unstable.
+ * Disclaimer: the tests relying on estimated-carbon values are unstable.
  *
  * The models used by co2js contain unversioned changes in the constants that
- * go into the calculation of the carbon-operational value.
+ * go into the calculation of the estimated-carbon value.
  *
  * AzB copied these tests from the original plugin implementation
  * https://github.com/Green-Software-Foundation/if-unofficial-plugins/tree/main/src/lib/co2js
@@ -79,7 +79,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.023,
+            'estimated-carbon': 0.023,
           },
         ]);
       });
@@ -131,7 +131,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data': 10,
             'green-web-host': true,
-            'carbon-operational': 2319.583,
+            'estimated-carbon': 2319.583,
           },
         ]);
       });
@@ -157,7 +157,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': false,
-            'carbon-operational': 0.029,
+            'estimated-carbon': 0.029,
           },
         ]);
       });
@@ -186,7 +186,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.025,
+            'estimated-carbon': 0.025,
           },
         ]);
       });
@@ -215,7 +215,7 @@ describe('lib/co2js: ', () => {
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'carbon-operational': 0.012,
+            'estimated-carbon': 0.012,
           },
         ]);
       });
@@ -246,7 +246,7 @@ describe('lib/co2js: ', () => {
             timestamp: '2021-01-01T00:00:00Z',
             duration: 3600,
             'network/data/bytes': 100000,
-            'carbon-operational': 0.037,
+            'estimated-carbon': 0.037,
             'green-web-host': false,
             options: {
               dataReloadRatio: 0.6,
