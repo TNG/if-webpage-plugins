@@ -1,7 +1,7 @@
 {
   "name": "@tngtech/if-webpage-plugins",
   "description": "Impact Framework - Plugins for estimating CO2e Impact of Webpages",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "A. zur Bonsen, TNG Technology Consulting GmbH",
     "email": "alexander.zur.bonsen@tngtech.com"
