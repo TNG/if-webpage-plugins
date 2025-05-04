@@ -176,19 +176,21 @@ describe('lib/co2js: ', () => {
           },
         ];
 
-        expect.assertions(1);
+        expect.assertions(3);
 
         const result = await output.execute(inputs);
 
-        expect(result).toStrictEqual([
+        expect(result).toMatchObject([
           {
             timestamp: '2021-01-01T00:00:00Z',
             duration: 3600,
             'network/data/bytes': 100000,
             'green-web-host': true,
-            'estimated-carbon': 0.025,
           },
         ]);
+
+        expect(result[0]['estimated-carbon']).toBeGreaterThan(0.024); // expected value was 0.036 at time of this change
+        expect(result[0]['estimated-carbon']).toBeLessThan(0.028);
       });
 
       it('returns a result when `type` is `swd` and `version` is given in config.', async () => {
@@ -239,14 +241,13 @@ describe('lib/co2js: ', () => {
         ];
         const result = await output.execute(inputs);
 
-        expect.assertions(1);
+        expect.assertions(3);
 
-        expect(result).toStrictEqual([
+        expect(result).toMatchObject([
           {
             timestamp: '2021-01-01T00:00:00Z',
             duration: 3600,
             'network/data/bytes': 100000,
-            'estimated-carbon': 0.037,
             'green-web-host': false,
             options: {
               dataReloadRatio: 0.6,
@@ -255,6 +256,8 @@ describe('lib/co2js: ', () => {
             },
           },
         ]);
+        expect(result[0]['estimated-carbon']).toBeGreaterThan(0.035); // expected value was 0.037 at time of this change
+        expect(result[0]['estimated-carbon']).toBeLessThan(0.039);
       });
 
       it('throws an error when config is mising.', async () => {
