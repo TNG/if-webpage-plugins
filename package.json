@@ -18,8 +18,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@babel/core": "7.27.1",
-    "@babel/preset-typescript": "^7.22.5",
+    "@babel/core": "7.27.4",
+    "@babel/preset-typescript": "^7.27.1",
     "@jest/globals": "^29.6.1",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.7",
