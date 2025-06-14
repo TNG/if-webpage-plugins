@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@grnsft/if-core": "^0.0.30",
-    "@tgwf/co2": "^0.16.5",
+    "@tgwf/co2": "^0.16.8",
     "puppeteer": "^24.10.0",
     "tldjs": "^2.3.1",
     "typescript": "^5.1.6",
