@@ -14,7 +14,7 @@
     "@tgwf/co2": "^0.16.8",
     "puppeteer": "^24.10.1",
     "tldjs": "^2.3.1",
-    "typescript": "^5.1.6",
+    "typescript": "^5.8.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
