@@ -128,6 +128,9 @@ export const WebpageImpact = PluginFactory({
 });
 
 const WebpageImpactUtils = () => {
+  const DEFAULT_VIEWPORT_WIDTH = 1440;
+  const DEFAULT_VIEWPORT_HEIGHT = 900;
+
   const measurePageImpactMetrics = async (
     url: string,
     config?: ConfigParams,
@@ -167,7 +170,7 @@ const WebpageImpactUtils = () => {
           );
         } else {
           // set viewport to a reasonable size for laptops. I hope that is a sensible default.
-          await page.setViewport({width: 1440, height: 900});
+          await page.setViewport({width: DEFAULT_VIEWPORT_WIDTH, height: DEFAULT_VIEWPORT_HEIGHT});
         }
 
         await page.setRequestInterception(true);
@@ -280,25 +283,33 @@ const WebpageImpactUtils = () => {
     cdpTransferSizes: Record<string, {transferSize: number}>,
   ): Resource[] => {
     const pageResources: Resource[] = [];
+    const missingTransferSizeUrls: string[] = [];
     for (const [requestId, response] of Object.entries(cdpResponses)) {
       const transferSize = cdpTransferSizes[requestId]?.transferSize;
       if (transferSize === undefined) {
-        console.debug(
-          `${LOGGER_PREFIX}: No transfer size found for resource ${response.url}, status: ${response.status}`,
-        );
+        missingTransferSizeUrls.push(response.url);
       }
       pageResources.push({
         ...response,
         transferSize: transferSize ?? 0,
       });
     }
+    if (missingTransferSizeUrls.length > 0) {
+      console.warn(`${LOGGER_PREFIX}: No transfer size found for the following resources:
+${missingTransferSizeUrls.map(url => `- ${url}`).join('\n')}`);
+    }
     return pageResources;
   };
 
+  const SCROLL_DISTANCE = 100;
+  const SCROLL_INTERVAL_MS = 100;
+  const SCROLL_TIMEOUT_MS = 30000;
+
   const scrollToBottomOfPage = async () => {
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve, reject) => { // Added reject parameter
       let totalHeight = 0;
-      const distance = 100;
+      const distance = SCROLL_DISTANCE;
+
       const timer = setInterval(() => {
         const scrollHeight = document.body.scrollHeight;
         window.scrollBy(0, distance);
@@ -306,9 +317,16 @@ const WebpageImpactUtils = () => {
 
         if (totalHeight >= scrollHeight) {
           clearInterval(timer);
+          clearTimeout(scrollTimeout); // Clear the timeout
           resolve();
         }
-      }, 100);
+      }, SCROLL_INTERVAL_MS);
+
+      const scrollTimeout = setTimeout(() => {
+        clearInterval(timer);
+        console.warn(`${LOGGER_PREFIX}: Scrolling to bottom of page timed out after ${SCROLL_TIMEOUT_MS / 1000} seconds.`);
+        resolve(); // Resolve anyway to not break the flow
+      }, SCROLL_TIMEOUT_MS);
     });
   };
 
