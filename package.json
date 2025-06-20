@@ -15,7 +15,7 @@
     "puppeteer": "^24.10.1",
     "tldjs": "^2.3.1",
     "typescript": "^5.8.3",
-    "zod": "^3.22.4"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@babel/core": "7.27.4",
@@ -35,7 +35,7 @@
     "jest-mock-axios": "^4.8.0",
     "lint-staged": "^15.5.2",
     "ts-jest": "^29.4.0",
-    "zod": "^3.22.4"
+    "zod": "^3.25.67"
   },
   "engines": {
     "node": ">=18",
