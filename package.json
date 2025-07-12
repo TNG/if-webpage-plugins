@@ -24,7 +24,7 @@
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.16.0",
+    "@types/node": "^22.16.3",
     "@types/tgwf__co2": "^0.14.2",
     "@types/tldjs": "^2.3.4",
     "express": "^5.1.0",
