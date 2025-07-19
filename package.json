@@ -12,7 +12,7 @@
   "dependencies": {
     "@grnsft/if-core": "^0.0.30",
     "@tgwf/co2": "^0.16.8",
-    "puppeteer": "^24.12.1",
+    "puppeteer": "^24.14.0",
     "tldjs": "^2.3.2",
     "typescript": "^5.8.3",
     "zod": "^3.25.76"
