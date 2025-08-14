@@ -31,7 +31,7 @@ The follwing config parameters are optional:
 - `network/data/resources/bytes`: resource weights by category in bytes
 - `dataReloadRatio`: If `computeReloadRatio` is true: estimate of the amount of data that is reloaded on return visits (Can be fed into the co2js plugin.)
 - `timestamp`: set to the time of the plugin execution
-- `duration`: set to 0 (because the request time does not seem of particular interest here to the author)
+- `duration`: Time that the measurement took in seconds.
 
 ### Error Handling
 
