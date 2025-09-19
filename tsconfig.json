@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./build",
     "declarationMap": false,
     "inlineSourceMap": true,
@@ -33,13 +33,10 @@
   },
   "exclude": [
     "node_modules",
-    ".types-compat",
     "build",
-    "src/__tests__",
-    "src/__mocks__",
-    "./src/cjs-wrapper.ts"
   ],
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "vitest.config.ts"
   ],
 }
