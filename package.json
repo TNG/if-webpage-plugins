@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@grnsft/if-core": "^0.0.30",
-    "@tgwf/co2": "^0.16.8",
-    "puppeteer": "^24.18.0",
+    "@tgwf/co2": "^0.16.9",
+    "puppeteer": "^24.20.0",
     "tldjs": "^2.3.2",
     "typescript": "^5.9.2",
     "zod": "^3.25.76"
@@ -24,7 +24,7 @@
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.18.1",
+    "@types/node": "^22.18.3",
     "@types/tgwf__co2": "^0.14.2",
     "@types/tldjs": "^2.3.4",
     "express": "^5.1.0",
