@@ -1,7 +1,7 @@
 module.exports = {
   '*.ts': [
     'gts lint',
-    'jest --verbose --findRelatedTests --passWithNoTests',
+    'npm run test:pre-commit',
   ],
   'package.json': 'fixpack',
 }

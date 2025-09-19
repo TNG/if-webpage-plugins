@@ -3,6 +3,7 @@
 
 import http from 'http';
 import express, {Express} from 'express';
+import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
 import {WebpageImpact} from '../../../../lib';
 
 describe('lib/webpage-impact', () => {
@@ -91,7 +92,7 @@ describe('lib/webpage-impact', () => {
         const mockTimestamp = 1609459200000;
         const expectedtimestampISO = new Date(mockTimestamp).toISOString();
 
-        jest.spyOn(Date, 'now').mockImplementation(() => mockTimestamp);
+        vi.spyOn(Date, 'now').mockImplementation(() => mockTimestamp);
 
         const webpageImpact = WebpageImpact(
           {url: 'http://localhost:3000', computeReloadRatio: true},

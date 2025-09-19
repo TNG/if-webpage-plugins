@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
 // SPDX SPDX-License-Identifier: Apache-2.0
 
+import {vi, describe, it, expect} from 'vitest';
 import {TimerStop} from '../../../../lib';
 import {STRINGS} from '../../../../config';
 
@@ -23,7 +24,7 @@ describe('lib/timer', () => {
       it('sets time and duration, and deletes empty resets if reset is true', async () => {
         const timestamp = 1704153600000; // 2024-01-02T00:00:00Z
 
-        jest.spyOn(Date, 'now').mockImplementation(() => timestamp);
+        vi.spyOn(Date, 'now').mockImplementation(() => timestamp);
 
         const inputs = [
           {
@@ -46,7 +47,7 @@ describe('lib/timer', () => {
       it('sets time and duration correctly if reset is false, and handles resets with length > 1 correctly', async () => {
         const timestamp = 1704153600000; // 2024-01-02T00:00:00Z
 
-        jest.spyOn(Date, 'now').mockImplementation(() => timestamp);
+        vi.spyOn(Date, 'now').mockImplementation(() => timestamp);
 
         const inputs = [
           {

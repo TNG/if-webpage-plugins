@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
 // SPDX SPDX-License-Identifier: Apache-2.0
 
+import {vi, describe, it, expect} from 'vitest';
 import {TimerStart} from '../../../../lib';
 import {STRINGS} from '../../../../config';
 
@@ -24,7 +25,7 @@ describe('lib/timer', () => {
         const timestamp = 1609459200000;
         const timestampISO = new Date(timestamp).toISOString();
 
-        jest.spyOn(Date, 'now').mockImplementation(() => timestamp);
+        vi.spyOn(Date, 'now').mockImplementation(() => timestamp);
 
         const inputs = [
           {
