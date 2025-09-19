@@ -7,6 +7,7 @@ import puppeteer, {
   Page,
   PredefinedNetworkConditions,
   Protocol,
+  TimeoutError,
 } from 'puppeteer';
 import {z} from 'zod';
 
@@ -128,6 +129,9 @@ export const WebpageImpact = PluginFactory({
 });
 
 const WebpageImpactUtils = () => {
+  const DEFAULT_VIEWPORT_WIDTH = 1440;
+  const DEFAULT_VIEWPORT_HEIGHT = 900;
+
   const measurePageImpactMetrics = async (
     url: string,
     config?: ConfigParams,
@@ -167,7 +171,10 @@ const WebpageImpactUtils = () => {
           );
         } else {
           // set viewport to a reasonable size for laptops. I hope that is a sensible default.
-          await page.setViewport({width: 1440, height: 900});
+          await page.setViewport({
+            width: DEFAULT_VIEWPORT_WIDTH,
+            height: DEFAULT_VIEWPORT_HEIGHT,
+          });
         }
 
         await page.setRequestInterception(true);
@@ -295,10 +302,14 @@ const WebpageImpactUtils = () => {
     return pageResources;
   };
 
+  const SCROLL_DISTANCE = 100;
+  const SCROLL_INTERVAL_MS = 100;
+  const SCROLL_TIMEOUT_MS = 30000;
+
   const scrollToBottomOfPage = async () => {
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve, reject) => {
       let totalHeight = 0;
-      const distance = 100;
+      const distance = SCROLL_DISTANCE;
       const timer = setInterval(() => {
         const scrollHeight = document.body.scrollHeight;
         window.scrollBy(0, distance);
@@ -308,7 +319,16 @@ const WebpageImpactUtils = () => {
           clearInterval(timer);
           resolve();
         }
-      }, 100);
+      }, SCROLL_INTERVAL_MS);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        reject(
+          new TimeoutError(
+            `${LOGGER_PREFIX}: Scrolling to bottom of page timed out after ${SCROLL_TIMEOUT_MS / 1000} seconds.`,
+          ),
+        );
+      }, SCROLL_TIMEOUT_MS);
     });
   };
 
