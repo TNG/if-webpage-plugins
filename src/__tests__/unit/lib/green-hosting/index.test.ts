@@ -73,7 +73,7 @@ describe('lib/green-hosting', () => {
 
         const inputs = [
           {
-            url: 'https://ex%%%ample.com',
+            url: 'https://example.com',
           },
         ];
 
@@ -83,8 +83,8 @@ describe('lib/green-hosting', () => {
           {
             timestamp: timestampISO,
             duration: 0,
-            url: 'https://ex%%%ample.com',
-            'green-web-host': undefined,
+            url: 'https://example.com',
+            'green-web-host': false,
           },
         ]);
       });
