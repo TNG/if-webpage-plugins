@@ -1,8 +1,20 @@
 // SPDX-FileCopyrightText: 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
 // SPDX SPDX-License-Identifier: Apache-2.0
 
+import {vi, describe, it, expect} from 'vitest';
 import {GreenHosting} from '../../../../lib';
 import {hosting} from '@tgwf/co2';
+
+// Mock the hosting module
+vi.mock('@tgwf/co2', async () => {
+  const actual = await vi.importActual('@tgwf/co2');
+  return {
+    ...actual,
+    hosting: {
+      check: vi.fn(),
+    },
+  };
+});
 
 describe('lib/green-hosting', () => {
   describe('GreenHosting:', () => {
@@ -29,7 +41,7 @@ describe('lib/green-hosting', () => {
             },
           ];
 
-          jest.spyOn(hosting, 'check').mockImplementation(() => checkValue);
+          vi.mocked(hosting.check).mockResolvedValue(checkValue);
 
           const {execute} = GreenHosting(undefined, {}, {});
           const actual_result = await execute(inputs);
@@ -69,7 +81,7 @@ describe('lib/green-hosting', () => {
         const timestamp = 1609459200000;
         const timestampISO = new Date(timestamp).toISOString();
 
-        jest.spyOn(Date, 'now').mockImplementation(() => timestamp);
+        vi.spyOn(Date, 'now').mockImplementation(() => timestamp);
 
         const inputs = [
           {

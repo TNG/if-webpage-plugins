@@ -37,29 +37,29 @@ version, a minimal reproduction setup and a clear description of expected versus
 ### Submitting a pull request
 
 1. Look through open and recently merged pull requests to make sure your issue hasn't been addressed already.
-1. Create a fork of the if-webpage-plugins repository.
-1. Start a new branch from `main`:
+2. Create a fork of the if-webpage-plugins repository.
+3. Start a new branch from `main`:
 
 ```shell
 git switch -c my-awesome-fix
 ```
 
-1. Make your changes and commit them to your branch. Please make sure to adhere to the implicit code style of the existing code.
+4. Make your changes and commit them to your branch. Please make sure to adhere to the implicit code style of the existing code.
    Please also check out the [commit message conventions](#commitmsg) to learn how to write the commit messages.
 
 ```shell
 git commit -a
 ```
 
-1. Push your branch to your forked repository:
+5. Push your branch to your forked repository:
 
 ```shell
 git push origin my-awesome-fix
 ```
 
-1. Visit the if-webpage-plugins repository on Github and follow the instructions to create a pull request.
-1. If we request any changes, please add them to your existing commit and force-push your branch. Also make sure to rebase
-   your PR once there are new commits on main. Leave a comment after pushing your changes so that we are notified and can check again. This process may take a few iterations.
+6. Visit the if-webpage-plugins repository on Github and follow the instructions to create a pull request.
+7. If we request any changes, please add them to your existing commit and force-push your branch. Also make sure to rebase
+your PR once there are new commits on main. Leave a comment after pushing your changes so that we are notified and can check again. This process may take a few iterations.
 
 ```shell
 git rebase main -i
@@ -67,6 +67,12 @@ git push --force-with-lease
 ```
 
 Thank you for your contribution!
+
+### Testing
+
+To make the tests for the webpage impact plugin work, you need a chrome installation for puppeteer.
+
+Run `npx puppeteer browsers install chrome` to install the latest one.
 
 ### <a name="commitmsg"></a> Commit Message Conventions
 
