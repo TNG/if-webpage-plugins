@@ -46,6 +46,9 @@ For usage with the Impact Framework cli install globally with
 npm install -g @tngtech/if-webpage-plugins
 ```
 
+Puppeteer also requires access to a Chrome installation. If none is available,
+install it with `npx puppeteer browsers install chrome`.
+
 ## Example Usage (manifest file)
 
 Also see `example-manifests` directory.
