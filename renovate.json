@@ -1,6 +1,37 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    ":dependencyDashboard",
+    ":automergeTypes",
+    ":automergeLinters",
+    ":automergeTesters"
+  ],
+  "addLabels": [
+    "dependencies"
+  ],
+  "automergeType": "branch",
+  "prConcurrentLimit": 5,
+  "prCreation": "not-pending",
+  "rangeStrategy": "bump",
+  "minimumReleaseAge": "3 day",
+  "nvm": {
+    "enabled": false
+  },
+  "packageRules": [
+    {
+      "updateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Ignore engines field in package.json",
+      "matchDepTypes": [
+        "engines"
+      ],
+      "enabled": false
+    }
   ]
 }
