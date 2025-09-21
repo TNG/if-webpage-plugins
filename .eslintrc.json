@@ -6,6 +6,6 @@
     ]
   },
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.dev.json"
   }
 }
