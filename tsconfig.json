@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./build",
     "declarationMap": false,
     "inlineSourceMap": true,
@@ -36,7 +36,6 @@
     "build",
   ],
   "include": [
-    "src/**/*.ts",
-    "vitest.config.ts"
+    "src/**/*.ts"
   ],
 }

@@ -26,5 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run type checking
+        run: npm run typecheck
+
       - name: Run unit tests
-        run: npm test
+        run: npm run test:unit:ci
+
+      - name: Build project
+        run: npm run build
