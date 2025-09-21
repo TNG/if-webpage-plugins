@@ -30,7 +30,7 @@ jobs:
         run: npm run typecheck
 
       - name: Run unit tests
-        run: npm run test:unit:ci
+        run: npm run test:ci
 
       - name: Build project
         run: npm run build
