@@ -71,8 +71,6 @@
     "prepublish": "npm run build",
     "test": "vitest",
     "test:ci": "vitest --run",
-    "test:integration:ci": "vitest --run src/__tests__/integration/package-validation.test.ts",
-    "test:unit:ci": "vitest --run --exclude src/__tests__/integration/**/*.test.ts --passWithNoTests",
     "typecheck": "tsc --build tsconfig.dev.json"
   }
 }
