@@ -302,12 +302,12 @@ const WebpageImpactUtils = () => {
     return pageResources;
   };
 
-  const SCROLL_DISTANCE = 100;
-  const SCROLL_INTERVAL_MS = 100;
-  const SCROLL_TIMEOUT_MS = 30000;
-
   const scrollToBottomOfPage = async () => {
     await new Promise<void>((resolve, reject) => {
+      const SCROLL_DISTANCE = 100;
+      const SCROLL_INTERVAL_MS = 100;
+      const SCROLL_TIMEOUT_MS = 30000;
+
       let totalHeight = 0;
       const distance = SCROLL_DISTANCE;
       const timer = setInterval(() => {
