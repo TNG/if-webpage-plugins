@@ -20,7 +20,7 @@
   "devDependencies": {
     "@babel/core": "7.28.5",
     "@babel/preset-typescript": "^7.28.5",
-    "@types/express": "^5.0.3",
+    "@types/express": "^5.0.4",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.18.12",
     "@types/tgwf__co2": "^0.14.2",
