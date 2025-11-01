@@ -22,7 +22,7 @@
     "@babel/preset-typescript": "^7.28.5",
     "@types/express": "^5.0.4",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.18.12",
+    "@types/node": "^24.9.2",
     "@types/tgwf__co2": "^0.14.2",
     "@types/tldjs": "^2.3.4",
     "express": "^5.1.0",
