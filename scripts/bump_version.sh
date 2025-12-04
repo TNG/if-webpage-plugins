@@ -34,10 +34,10 @@ fi
 VERSION="$1"
 
 echo -e "${VIOLET}Bump version to ${VERSION}.${NC}"
-npm version "${VERSION}" --no-git-tag-version
+pnpm version "${VERSION}" --no-git-tag-version
 
 echo -e "\n${VIOLET}Install to update package lock file${NC}"
-npm install
+pnpm install --frozen-lockfile
 
 if [[ "${CREATE_COMMIT}" == "true" ]]; then
   echo -e "\n${VIOLET}Creating a commit${NC}"

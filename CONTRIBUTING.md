@@ -72,7 +72,7 @@ Thank you for your contribution!
 
 To make the tests for the webpage impact plugin work, you need a chrome installation for puppeteer.
 
-Run `npx puppeteer browsers install chrome` to install the latest one.
+Run `pnpm exec puppeteer browsers install chrome` to install the required version.
 
 ### <a name="commitmsg"></a> Commit Message Conventions
 

@@ -43,11 +43,11 @@ For further info on the plugins, see their README files.
 For usage with the Impact Framework cli install globally with
 
 ```sh
-npm install -g @tngtech/if-webpage-plugins
+pnpm install -g @tngtech/if-webpage-plugins
 ```
 
 Puppeteer also requires access to a Chrome installation. If none is available,
-install it with `npx puppeteer browsers install chrome`.
+install it with `pnpm exec puppeteer browsers install chrome`.
 
 ## Example Usage (manifest file)
 
