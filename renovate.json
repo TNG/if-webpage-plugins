@@ -1,6 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabled": false,
   "extends": [
     "config:recommended",
     ":dependencyDashboard",
@@ -16,6 +15,10 @@
   "prCreation": "not-pending",
   "rangeStrategy": "bump",
   "minimumReleaseAge": "3 day",
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true,
   "nvm": {
     "enabled": false
   },
