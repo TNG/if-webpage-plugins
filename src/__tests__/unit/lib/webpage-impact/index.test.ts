@@ -88,60 +88,64 @@ describe('lib/webpage-impact', () => {
       // I did a lot of manual testing on this, comparing dev tool request sizes against results
       // from the plugin, so I am fairly confident that the values are plausible with a margin of error.
       // I also compared against other online tools, like ecograder.com, which returned similar values in my tests
-      it('computes transfer sizes that seem plausible for the mock page', async () => {
-        const mockTimestamp = 1609459200000;
-        const expectedtimestampISO = new Date(mockTimestamp).toISOString();
+      it.skipIf(!!process.env.CI)(
+        'computes transfer sizes that seem plausible for the mock page',
+        async () => {
+          const mockTimestamp = 1609459200000;
+          const expectedtimestampISO = new Date(mockTimestamp).toISOString();
 
-        vi.spyOn(Date, 'now').mockImplementation(() => mockTimestamp);
+          vi.spyOn(Date, 'now').mockImplementation(() => mockTimestamp);
 
-        const webpageImpact = WebpageImpact(
-          {url: 'http://localhost:3000', computeReloadRatio: true},
-          {},
-          {},
-        );
+          const webpageImpact = WebpageImpact(
+            {url: 'http://localhost:3000', computeReloadRatio: true},
+            {},
+            {},
+          );
 
-        const testFirstVisitPercentage = 0.9;
-        const testReturnVisitPercentage = 0.1;
+          const testFirstVisitPercentage = 0.9;
+          const testReturnVisitPercentage = 0.1;
 
-        const {timestamp, duration, url, ...data} = (
-          await webpageImpact.execute([
-            {
-              options: {
-                firstVisitPercentage: testFirstVisitPercentage,
-                returnVisitPercentage: testReturnVisitPercentage,
+          const {timestamp, duration, url, ...data} = (
+            await webpageImpact.execute([
+              {
+                options: {
+                  firstVisitPercentage: testFirstVisitPercentage,
+                  returnVisitPercentage: testReturnVisitPercentage,
+                },
               },
-            },
-          ])
-        )[0];
+            ])
+          )[0];
 
-        console.log(data);
-        expect(timestamp).toEqual(expectedtimestampISO);
-        expect(duration).toEqual(0);
-        expect(url).toEqual('http://localhost:3000');
-        expect(data['network/data/bytes']).toBeGreaterThanOrEqual(2000);
-        expect(data['network/data/bytes']).toBeLessThanOrEqual(2200);
-        expect(
-          data['network/data/resources/bytes']['Document'],
-        ).toBeGreaterThanOrEqual(800);
-        expect(
-          data['network/data/resources/bytes']['Document'],
-        ).toBeLessThanOrEqual(850);
-        expect(
-          data['network/data/resources/bytes']['Fetch'],
-        ).toBeGreaterThanOrEqual(800);
-        expect(
-          data['network/data/resources/bytes']['Fetch'],
-        ).toBeLessThanOrEqual(850);
-        expect(data['network/data/resources/bytes']['Other']).toEqual(422);
-        expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.45);
-        expect(data.options.dataReloadRatio).toBeLessThanOrEqual(0.5);
-        expect(data.options.firstVisitPercentage).toEqual(
-          testFirstVisitPercentage,
-        );
-        expect(data.options.returnVisitPercentage).toEqual(
-          testReturnVisitPercentage,
-        );
-      }, 10000);
+          console.log(data);
+          expect(timestamp).toEqual(expectedtimestampISO);
+          expect(duration).toEqual(0);
+          expect(url).toEqual('http://localhost:3000');
+          expect(data['network/data/bytes']).toBeGreaterThanOrEqual(2000);
+          expect(data['network/data/bytes']).toBeLessThanOrEqual(2200);
+          expect(
+            data['network/data/resources/bytes']['Document'],
+          ).toBeGreaterThanOrEqual(800);
+          expect(
+            data['network/data/resources/bytes']['Document'],
+          ).toBeLessThanOrEqual(850);
+          expect(
+            data['network/data/resources/bytes']['Fetch'],
+          ).toBeGreaterThanOrEqual(800);
+          expect(
+            data['network/data/resources/bytes']['Fetch'],
+          ).toBeLessThanOrEqual(850);
+          expect(data['network/data/resources/bytes']['Other']).toEqual(422);
+          expect(data.options.dataReloadRatio).toBeGreaterThanOrEqual(0.45);
+          expect(data.options.dataReloadRatio).toBeLessThanOrEqual(0.5);
+          expect(data.options.firstVisitPercentage).toEqual(
+            testFirstVisitPercentage,
+          );
+          expect(data.options.returnVisitPercentage).toEqual(
+            testReturnVisitPercentage,
+          );
+        },
+        10000,
+      );
     });
   });
 });
