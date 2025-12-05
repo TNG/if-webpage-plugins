@@ -38,7 +38,7 @@ fi
 
 # Bump the version (updates package.json)
 echo "Bumping version..."
-pnpm version $VERSION_ARG -m "chore: release version %s"
+pnpm version $VERSION_ARG -m "chore: release version %s" --sign-git-tag
 
 echo "Pushing change and tag..."
 git push --follow-tags
