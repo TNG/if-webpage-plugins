@@ -1,0 +1,15 @@
+if-webpage-plugins
+
+This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
+
+Copyright 2024 Alexander zur Bonsen <alexander.zur.bonsen@tngtech.com>
+
+The respective code is distributed under Apache 2.0 license.
+
+
+This product contains code from [if-plugins](https://github.com/Green-Software-Foundation/if-plugins) and [if-unofficial-plugins](https://github.com/Green-Software-Foundation/if-unofficial-plugins) of the Green
+Software Foundation. The respective source files are marked with a file notice. The code is distributed under MIT license with
+
+Copyright (c) 2023 Green Software Foundation
+
+The respective licenses can be found in the licenses directory on the same level as this file.
