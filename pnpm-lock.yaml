@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@grnsft/if-core':
-        specifier: ^0.0.30
-        version: 0.0.30
+        specifier: ^0.0.31
+        version: 0.0.31
       '@tgwf/co2':
         specifier: ^0.16.9
         version: 0.16.9
@@ -410,8 +410,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@grnsft/if-core@0.0.30':
-    resolution: {integrity: sha512-KBX/oYPJnXHSYIo8J27fzLOu0sCvHTbx09O1iHt6qZjrxirYOt9NnXgPlgOdxSg5ArRQNlmQs2G4loy90GeocA==}
+  '@grnsft/if-core@0.0.31':
+    resolution: {integrity: sha512-6F4VhanSd0c5g/5txLk1g4jSzabS57jgkZGl0IqJ9+uf9DF3S4BNHYFuDB229CL6rkqQE0FJ+nalkwhQqRgkQg==}
     engines: {node: '>=18', npm: '>=8'}
 
   '@humanwhocodes/config-array@0.13.0':
@@ -869,7 +869,7 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==}
     engines: {node: '>=10.0.0'}
-    deprecated: Security vulnerability fixed in 5.2.0, please upgrade
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   body-parser@2.2.1:
     resolution: {integrity: sha512-nfDwkulwiZYQIGwxdy0RUmowMhKcFVcYXUU7m4QlKYim1rUtg83xm2yjZ40QjDuc291AJjjeSc9b++AWHSgSHw==}
@@ -2839,7 +2839,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@grnsft/if-core@0.0.30':
+  '@grnsft/if-core@0.0.31':
     dependencies:
       zod: 3.25.76
 
