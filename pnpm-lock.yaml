@@ -12,8 +12,8 @@ importers:
         specifier: ^0.0.31
         version: 0.0.31
       '@tgwf/co2':
-        specifier: ^0.16.9
-        version: 0.16.9
+        specifier: ^0.18.0
+        version: 0.18.0
       puppeteer:
         specifier: ^24.42.0
         version: 24.42.0(typescript@5.9.3)
@@ -668,8 +668,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@tgwf/co2@0.16.9':
-    resolution: {integrity: sha512-+nuT7HS5r22lbW4MdgSPHhirYBjHR6Q8sz5kX6dKdK+yIkRukLAGaH6L/toZwVEOuEeeIRfWYJuaJIoxEGDMXg==}
+  '@tgwf/co2@0.18.0':
+    resolution: {integrity: sha512-YMLTBPJX1WqKcnf4oRnw7laDcAExj2efT+ujglaHCRPG5/66raaIlUav3JgMIN+aDilwyGrmLhUoM2PvWYavFQ==}
     engines: {node: '>=14.0.0'}
 
   '@tootallnate/quickjs-emscripten@0.23.0':
@@ -3335,7 +3335,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.53.3':
     optional: true
 
-  '@tgwf/co2@0.16.9': {}
+  '@tgwf/co2@0.18.0': {}
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
