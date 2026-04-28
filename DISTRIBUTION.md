@@ -4,7 +4,7 @@ To create a new release
 
 1. Run `./scripts/prepare-release.sh` to create a version bump commit and a tag.
 2. Create the GitHub release.
-3. Trigger the release workflow in the release repo. It picks up the latest tag to create a release.
+3. The release workflow should be triggered automatically and an admin needs to approve it. It picks up the latest tag to create a release.
 
 Background:
 
@@ -14,4 +14,4 @@ To make the two step setup convenient the branch protection rules are configured
 
 This is a short-coming since it can lead to a broken main branch.
 But otherwise I have to do even more manual stuff. Doesn't make me happy...
-But might have to reconsider if this proves the wrong choice.
+Might have to reconsider if this proves to be the wrong choice.

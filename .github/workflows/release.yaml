@@ -7,6 +7,8 @@ on:
         description: "The tag to release (leave empty to use latest tag)"
         required: false
         type: string
+  release:
+    types: [published]
 
 permissions:
   id-token: write
@@ -25,7 +27,7 @@ jobs:
       - name: Determine Release Tag
         id: get_tag
         env:
-          RELEASE_REF: ${{ github.event.inputs.ref }}
+          RELEASE_REF: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.ref }}
         run: |
           if [ -n "$RELEASE_REF" ]; then
             if git show-ref --tags --verify --quiet "refs/tags/$RELEASE_REF"; then
@@ -81,4 +83,4 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          npm publish --access public --no-git-checks
+          npm publish --access public
