@@ -1,0 +1,86 @@
+name: Release Impact Framework Webpage Plugins
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "The tag to release (leave empty to use latest tag)"
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    environment: npm-publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          repository: "TNG/if-webpage-plugins"
+          token: ${{ secrets.TNG_RELEASE_GITHUB_ACCOUNT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Determine Release Tag
+        id: get_tag
+        env:
+          RELEASE_REF: ${{ github.event.inputs.ref }}
+        run: |
+          if [ -n "$RELEASE_REF" ]; then
+            if git show-ref --tags --verify --quiet "refs/tags/$RELEASE_REF"; then
+              TAG="$RELEASE_REF"
+            elif git show-ref --tags --verify --quiet "refs/tags/v$RELEASE_REF"; then
+              TAG="v$RELEASE_REF"
+            else
+              echo "Release tag does not exist: $RELEASE_REF"
+              exit 1
+            fi
+          else
+            # Get the latest tag
+            TAG=$(git tag --sort=-version:refname | head -1)
+          fi
+
+          if [ -z "$TAG" ]; then
+            echo "No release tag found"
+            exit 1
+          fi
+
+          echo "Releasing tag: $TAG"
+          printf 'tag=%s\n' "$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Release Tag
+        env:
+          RELEASE_TAG: ${{ steps.get_tag.outputs.tag }}
+        run: git switch --detach "$RELEASE_TAG"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          registry-url: https://registry.npmjs.org/
+
+      - name: Upgrade npm
+        run: |
+          npm install -g npm@latest
+          npm --version
+          pnpm --version
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Publish to NPM
+        run: |
+          npm publish --access public --no-git-checks
