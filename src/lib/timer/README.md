@@ -83,6 +83,7 @@ tree:
 The `outputs` look like in this example:
 
 ```yaml
+
 ...
 tree:
   children:
