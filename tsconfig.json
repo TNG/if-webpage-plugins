@@ -10,10 +10,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "incremental": false,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "module": "CommonJS",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
@@ -31,11 +28,6 @@
     "target": "ES2020",
     "composite": false
   },
-  "exclude": [
-    "node_modules",
-    "build",
-  ],
-  "include": [
-    "src/**/*.ts"
-  ],
+  "exclude": ["node_modules", "build"],
+  "include": ["src/**/*.ts"]
 }

@@ -59,7 +59,7 @@ git push origin my-awesome-fix
 
 6. Visit the if-webpage-plugins repository on Github and follow the instructions to create a pull request.
 7. If we request any changes, please add them to your existing commit and force-push your branch. Also make sure to rebase
-your PR once there are new commits on main. Leave a comment after pushing your changes so that we are notified and can check again. This process may take a few iterations.
+   your PR once there are new commits on main. Leave a comment after pushing your changes so that we are notified and can check again. This process may take a few iterations.
 
 ```shell
 git rebase main -i

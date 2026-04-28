@@ -44,5 +44,5 @@ tree:
         observe:
           - green-hosting
       inputs:
-          - url: www.thegreenwebfoundation.org
+        - url: www.thegreenwebfoundation.org
 ```

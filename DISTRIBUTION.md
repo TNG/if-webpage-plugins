@@ -2,10 +2,9 @@
 
 To create a new release
 
-1) Run `./scripts/prepare-release.sh` to create a version bump commit and a tag.
-2) Create the GitHub release.
-3) Trigger the release workflow in the release repo. It picks up the latest tag to create a release.
-
+1. Run `./scripts/prepare-release.sh` to create a version bump commit and a tag.
+2. Create the GitHub release.
+3. Trigger the release workflow in the release repo. It picks up the latest tag to create a release.
 
 Background:
 
