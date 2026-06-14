@@ -24,7 +24,7 @@
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.12.2",
+    "@types/node": "^24.13.2",
     "@types/tgwf__co2": "^0.14.2",
     "@types/tldjs": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^8.59.1",
