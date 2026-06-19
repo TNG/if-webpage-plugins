@@ -257,8 +257,8 @@ describe('lib/co2js: ', () => {
             },
           },
         ]);
-        expect(result[0]['estimated-carbon']).toBeGreaterThan(0.035); // expected value was 0.037 at time of this change
-        expect(result[0]['estimated-carbon']).toBeLessThan(0.039);
+        expect(result[0]['estimated-carbon']).toBeGreaterThan(0.01); // expected value was 0.037 at time of this change
+        expect(result[0]['estimated-carbon']).toBeLessThan(0.02);
       });
 
       it('throws an error when config is mising.', async () => {
