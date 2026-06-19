@@ -81,3 +81,12 @@ Please see [conventionalcommits.org][conventionalcommits] to learn how to format
 For changes to the documentation / website you can use the type "docs" directly.
 
 [conventionalcommits]: https://www.conventionalcommits.org
+
+### A note on branch protection
+
+`main` is protected by a repository ruleset (not classic branch protection) that requires a pull request with 1 approval, passing `test`/`lint`/`DCO` checks, signed commits, and blocks force-pushes and deletion. The bypass list keeps this from being looser than necessary:
+
+- Repository Admin role: bypass `always` — needed so the release author can push the version bump commit directly to `main` in step 1.
+- Renovate app: bypass `pull_request` — lets Renovate auto-merge its dependency PRs without a human approval (it still waits for its own checks).
+
+Everyone else must go through a reviewed, checked PR.
