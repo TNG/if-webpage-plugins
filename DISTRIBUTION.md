@@ -1,17 +1,10 @@
 # Distribution
 
-To create a new release
+To create a new release:
 
-1. Run `./scripts/prepare-release.sh` to create a version bump commit and a tag.
-2. Create the GitHub release.
-3. The release workflow should be triggered automatically and an admin needs to approve it. It picks up the latest tag to create a release.
+1. Run `./scripts/prepare-release.sh x.y.z` to create the version bump commit and tag, and push both to `main`.
+2. The release workflow (`.github/workflows/release.yaml`) triggers automatically on the pushed `v*` tag. An admin approves the `npm-publish` environment, after which a single run tests, builds, publishes to npm (via OIDC), and creates the GitHub release.
 
 Background:
 
-Security restrictions in the separation of code and release repo make it hard to have one automated workflow for the release that does all the things at once (create version bump commit and tag, publish release).
-
-To make the two step setup convenient the branch protection rules are configured such that pushes are possible without requiring all checks to pass.
-
-This is a short-coming since it can lead to a broken main branch.
-But otherwise I have to do even more manual stuff. Doesn't make me happy...
-Might have to reconsider if this proves to be the wrong choice.
+Publishing uses npm trusted publishing (OIDC), so no long-lived npm token is stored. Everything now happens in one workflow, triggered by the tag — there is no longer a separate release repo or a manual "create GitHub release" step.
