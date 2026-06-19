@@ -63,6 +63,13 @@
   ],
   "license": "Apache-2.0",
   "main": "./build/index.js",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "puppeteer",
+      "tldjs"
+    ]
+  },
   "publishConfig": {
     "access": "public"
   },
