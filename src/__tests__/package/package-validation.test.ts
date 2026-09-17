@@ -3,7 +3,7 @@
 
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {execSync} from 'child_process';
-import {existsSync, mkdtempSync, rmSync} from 'fs';
+import {existsSync, mkdtempSync, rmSync, writeFileSync} from 'fs';
 import {join} from 'path';
 import {tmpdir} from 'os';
 
@@ -11,14 +11,19 @@ describe('Package Validation', () => {
   let tempDir: string;
   let packagePath: string;
 
-  // pnpm 11 fails an install by default (ERR_PNPM_IGNORED_BUILDS) when a
-  // dependency has unreviewed build scripts. Approving builds is the consumer's
-  // choice, not a property of this package, so disable the strict gate here.
-  const installFlags = '--config.strict-dep-builds=false';
-
   beforeAll(() => {
     // Create a temporary directory for testing
     tempDir = mkdtempSync(join(tmpdir(), 'if-webpage-plugins-test-'));
+
+    // pnpm 11+ fails with ERR_PNPM_IGNORED_BUILDS when a dependency has
+    // unreviewed build scripts (puppeteer). Approving those scripts is the
+    // consumer's choice, not a property of this package. Write the setting
+    // into the throwaway workspace: `--config.strict-dep-builds=false` is not
+    // reliably honored on `pnpm install <tgz>` (notably pnpm 12).
+    writeFileSync(
+      join(tempDir, 'pnpm-workspace.yaml'),
+      'strictDepBuilds: false\n',
+    );
 
     // Build and pack the project
     execSync('pnpm run build', {cwd: process.cwd()});
@@ -61,25 +66,19 @@ describe('Package Validation', () => {
   describe('Package Installation', () => {
     it('should install successfully in a clean environment', () => {
       expect(() => {
-        execSync(
-          `pnpm install ${join(process.cwd(), packagePath)} ${installFlags}`,
-          {
-            cwd: tempDir,
-            stdio: 'pipe',
-          },
-        );
+        execSync(`pnpm install ${join(process.cwd(), packagePath)}`, {
+          cwd: tempDir,
+          stdio: 'pipe',
+        });
       }).not.toThrow();
     });
 
     it('should be importable after installation', () => {
       // Install the package
-      execSync(
-        `pnpm install ${join(process.cwd(), packagePath)} ${installFlags}`,
-        {
-          cwd: tempDir,
-          stdio: 'pipe',
-        },
-      );
+      execSync(`pnpm install ${join(process.cwd(), packagePath)}`, {
+        cwd: tempDir,
+        stdio: 'pipe',
+      });
 
       // Test import
       const testScript = `
