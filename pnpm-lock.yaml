@@ -17,9 +17,9 @@ importers:
       puppeteer:
         specifier: ^24.42.0
         version: 24.42.0(supports-color@7.2.0)(typescript@5.9.3)
-      tldjs:
-        specifier: ^2.3.2
-        version: 2.3.2
+      tldts:
+        specifier: ^7.4.13
+        version: 7.4.13
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -51,9 +51,6 @@ importers:
       '@types/tgwf__co2':
         specifier: ^0.14.2
         version: 0.14.2
-      '@types/tldjs':
-        specifier: ^2.3.4
-        version: 2.3.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.69.0
         version: 8.69.0(@typescript-eslint/parser@8.69.0(eslint@10.5.0(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@10.5.0(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
@@ -727,9 +724,6 @@ packages:
 
   '@types/tgwf__co2@0.14.2':
     resolution: {integrity: sha512-kgSh14wLbydB4TwHYVq/1pbOC4ww3EDNgLQ3kZSH6wZyDmBMTRyEaIBqXtCmuhKCotU71QAOpkIO3IHbHTtANA==}
-
-  '@types/tldjs@2.3.4':
-    resolution: {integrity: sha512-QVjtDOA3H6c+6uB+8018XwXUMR9WJ0zaA68lqXmzXETKkp/XD3t0GGyo6OWoKhVT9qVX28RW+zcOuyonIxqEbQ==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -2523,9 +2517,12 @@ packages:
     resolution: {integrity: sha512-azl+t0z7pw/z958Gy9svOTuzqIk6xq+NSheJzn5MMWtWTFywIacg2wUlzKFGtt3cthx0r2SxMK0yzJOR0IES7Q==}
     engines: {node: '>=14.0.0'}
 
-  tldjs@2.3.2:
-    resolution: {integrity: sha512-EORDwFMSZKrHPUVDhejCMDeAovRS5d8jZKiqALFiPp3cjKjEldPkxBY39ZSx3c45awz3RpKwJD1cCgGxEfy8/A==}
-    engines: {node: '>= 20'}
+  tldts-core@7.4.13:
+    resolution: {integrity: sha512-mbYsrih5FRtGxs3Usvl/PqwJsNpp+jsmrdFviiK02teHDG0/HebBG/pqCylje3kzgXYzuLoHJF/0mz9W53t8Xg==}
+
+  tldts@7.4.13:
+    resolution: {integrity: sha512-iHtaIWWIbMDkCeJdTBzZFGgbluE5J+oHlb2g7+oAz1S1gpuVpabRZdQyd471Vl8UUkcz2vXSL8xZH2kyCe8tfA==}
+    hasBin: true
 
   tmp@0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
@@ -3356,8 +3353,6 @@ snapshots:
       '@types/node': 24.12.2
 
   '@types/tgwf__co2@0.14.2': {}
-
-  '@types/tldjs@2.3.4': {}
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -5339,9 +5334,11 @@ snapshots:
 
   tinyspy@4.0.4: {}
 
-  tldjs@2.3.2:
+  tldts-core@7.4.13: {}
+
+  tldts@7.4.13:
     dependencies:
-      punycode: 2.3.1
+      tldts-core: 7.4.13
 
   tmp@0.0.33:
     dependencies:

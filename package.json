@@ -13,7 +13,7 @@
     "@grnsft/if-core": "^0.0.31",
     "@tgwf/co2": "^0.18.0",
     "puppeteer": "^24.42.0",
-    "tldjs": "^2.3.2",
+    "tldts": "^7.4.13",
     "typescript": "^5.9.3",
     "zod": "^3.25.76"
   },
@@ -26,7 +26,6 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.13.2",
     "@types/tgwf__co2": "^0.14.2",
-    "@types/tldjs": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.69.0",
     "eslint": "^10.5.0",

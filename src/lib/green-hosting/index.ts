@@ -2,7 +2,7 @@
 // SPDX SPDX-License-Identifier: Apache-2.0
 
 import {hosting} from '@tgwf/co2';
-import {getDomain} from 'tldjs';
+import {getDomain} from 'tldts';
 import {z} from 'zod';
 
 import {allDefined, validate} from '../../util/validations';

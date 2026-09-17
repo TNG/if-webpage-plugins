@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # pnpm 10+ blocks dependency build scripts by default. Allow the ones we rely on:
-# esbuild (native binary), puppeteer (Chromium download), tldjs (TLD-list refresh).
+# esbuild (native binary), puppeteer (Chromium download).
 allowBuilds:
   esbuild: true
   puppeteer: true
-  tldjs: true
