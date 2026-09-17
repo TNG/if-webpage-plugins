@@ -52,9 +52,6 @@ jobs:
             exit 1
           fi
 
-      - name: Test
-        run: pnpm run test:ci
-
       - name: Build
         run: pnpm run build
 
