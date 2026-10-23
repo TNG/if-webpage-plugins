@@ -15,7 +15,7 @@
     "puppeteer": "^24.43.1",
     "tldts": "^7.4.13",
     "typescript": "^5.9.3",
-    "zod": "^3.25.76"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
