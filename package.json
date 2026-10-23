@@ -13,7 +13,7 @@
     "@grnsft/if-core": "^0.0.31",
     "@tgwf/co2": "^0.18.0",
     "puppeteer": "^24.43.1",
-    "tldts": "^7.4.13",
+    "tldts": "^7.4.19",
     "typescript": "^5.9.3",
     "zod": "^3.25.76"
   },
