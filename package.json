@@ -28,7 +28,7 @@
     "@types/tgwf__co2": "^0.14.2",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.69.0",
-    "eslint": "^10.5.0",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-prettier": "^5.5.6",
