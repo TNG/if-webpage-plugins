@@ -18,8 +18,8 @@ importers:
         specifier: ^24.43.1
         version: 24.43.1(supports-color@7.2.0)(typescript@5.9.3)
       tldts:
-        specifier: ^7.4.13
-        version: 7.4.13
+        specifier: ^7.4.21
+        version: 7.5.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -2517,11 +2517,11 @@ packages:
     resolution: {integrity: sha512-azl+t0z7pw/z958Gy9svOTuzqIk6xq+NSheJzn5MMWtWTFywIacg2wUlzKFGtt3cthx0r2SxMK0yzJOR0IES7Q==}
     engines: {node: '>=14.0.0'}
 
-  tldts-core@7.4.13:
-    resolution: {integrity: sha512-mbYsrih5FRtGxs3Usvl/PqwJsNpp+jsmrdFviiK02teHDG0/HebBG/pqCylje3kzgXYzuLoHJF/0mz9W53t8Xg==}
+  tldts-core@7.5.0:
+    resolution: {integrity: sha512-1kVus7QxknwQLIyAVIziz32NkXyENMsBFOSEe3oB4MoUPyCKnzPgkrNLc03PZwzKFb3+GbuKbzoEkT94W3CO5w==}
 
-  tldts@7.4.13:
-    resolution: {integrity: sha512-iHtaIWWIbMDkCeJdTBzZFGgbluE5J+oHlb2g7+oAz1S1gpuVpabRZdQyd471Vl8UUkcz2vXSL8xZH2kyCe8tfA==}
+  tldts@7.5.0:
+    resolution: {integrity: sha512-qHpu8BE4S/si6A0hUBO8TWQ9C7cY69WGSFww5QM20YNnOssXfHS9Vu/Cm0+lkesSLULY/wa0NUg8zONQrnzyWA==}
     hasBin: true
 
   tmp@0.0.33:
@@ -5334,11 +5334,11 @@ snapshots:
 
   tinyspy@4.0.4: {}
 
-  tldts-core@7.4.13: {}
+  tldts-core@7.5.0: {}
 
-  tldts@7.4.13:
+  tldts@7.5.0:
     dependencies:
-      tldts-core: 7.4.13
+      tldts-core: 7.5.0
 
   tmp@0.0.33:
     dependencies:
